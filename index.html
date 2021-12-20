@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>camera-sample</title>
+    <script src="https://unpkg.com/dynamsoft-camera-enhancer@2.0.3/dist/dce.js"></script>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        html,body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+
+        video {
+            height: 94% !important;
+        }
+
+        #recognizerUI {
+            display: block;
+            width: 100% !important;
+            height: 80%;
+            margin: 0 auto;
+            top: 100px !important;
+        }
+
+        .control-panel {
+            width: 100%;
+            height: 200px;
+            position: absolute;
+            bottom: 0;
+            border: 1px solid black;
+            border-left: 0;
+            border-right: 0;
+            display: flex;
+        }
+
+        .btnGroup {
+            flex: 1;
+            border-right: 1px solid black;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .btnGroup .openCamera,
+        .btnGroup .capture {
+            border: 0;
+            background-color: rgb(64, 158, 255);
+            width: 100px;
+            height: 50px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+        }
+
+        .picGroup {
+            flex: 4;
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: start;
+        }
+
+        .picGroup canvas {
+            width: 19%;
+            height: 180px;
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="recognizerUI"></div>
+        <div class="control-panel">
+            <div class="btnGroup">
+                <button class="openCamera">开启摄像头</button>
+                <button class="capture">截取画面</button>
+            </div>
+            <div class="picGroup"></div>
+        </div>
+    </div>
+    <script>
+        (async ()=>{
+            Dynamsoft.DCE.CameraEnhancer.engineResourcePath = "https://unpkg.com/dynamsoft-camera-enhancer@2.0.3/dist/";
+            let enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance();
+            document.getElementById('recognizerUI').appendChild(enhancer.getUIElement());
+            let openCamera = document.querySelector('.openCamera')
+            let capture = document.querySelector('.capture')
+            let picGroup = document.querySelector('.picGroup')
+            openCamera.addEventListener('click', async ()=>{
+                if(enhancer.isOpen()) {
+                    return
+                } else {
+                    enhancer.open()
+                }
+            })
+            capture.addEventListener('click', ()=>{
+                let canvas = document.querySelectorAll('canvas')
+                if(canvas.length >= 5) {
+                    picGroup.removeChild(canvas[0])
+                } 
+                let frameData = enhancer.getFrame({
+                    regionBottom: 100,
+                    regionRight: 100,
+                    regionLeft: 0,
+                    regionTop: 0,
+                    regionMeasuredByPercentage: true
+                });
+                picGroup.appendChild(frameData.canvas);
+                console.log(frameData.canvas.toDataURL('img.png'));
+                var oImgPNG = Canvas2Image.saveAsPNG(frameData.canvas, true);
+                console.log(oImgPNG);
+                // console.log(canvas);
+            })
+        })()
+    </script>
+</body>
+</html>
