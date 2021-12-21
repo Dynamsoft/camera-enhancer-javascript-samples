@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>camera-sample</title>
     <script src="https://unpkg.com/dynamsoft-camera-enhancer@2.0.3/dist/dce.js"></script>
+    <script src="./nanoid.js"></script>
     <style>
         * {
             padding: 0;
@@ -75,9 +76,20 @@
         }
 
         .picGroup canvas {
-            width: 19%;
+            width: 95%;
             height: 180px;
             margin: 0 5px;
+        }
+
+        #item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        a {
+            text-decoration: none;
         }
     </style>
 </head>
@@ -86,13 +98,14 @@
         <div id="recognizerUI"></div>
         <div class="control-panel">
             <div class="btnGroup">
-                <button class="openCamera">开启摄像头</button>
-                <button class="capture">截取画面</button>
+                <button class="openCamera">open camera</button>
+                <button class="capture">capture</button>
             </div>
             <div class="picGroup"></div>
         </div>
     </div>
     <script>
+        console.log(nanoid());
         (async ()=>{
             Dynamsoft.DCE.CameraEnhancer.engineResourcePath = "https://unpkg.com/dynamsoft-camera-enhancer@2.0.3/dist/";
             let enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance();
@@ -109,8 +122,11 @@
             })
             capture.addEventListener('click', ()=>{
                 let canvas = document.querySelectorAll('canvas')
+                let item = document.createElement('div')
+                item.id = 'item'
                 if(canvas.length >= 5) {
-                    picGroup.removeChild(canvas[0])
+                    let items = document.querySelectorAll('#item')
+                    picGroup.removeChild(items[0])
                 } 
                 let frameData = enhancer.getFrame({
                     regionBottom: 100,
@@ -119,11 +135,13 @@
                     regionTop: 0,
                     regionMeasuredByPercentage: true
                 });
-                picGroup.appendChild(frameData.canvas);
-                console.log(frameData.canvas.toDataURL('img.png'));
-                var oImgPNG = Canvas2Image.saveAsPNG(frameData.canvas, true);
-                console.log(oImgPNG);
-                // console.log(canvas);
+                item.appendChild(frameData.canvas);
+                let download = document.createElement("a");
+                download.innerHTML = 'download'
+                download.download = nanoid(10);
+                download.href = frameData.canvas.toDataURL('img.png');
+                item.appendChild(download);
+                picGroup.appendChild(item)
             })
         })()
     </script>
