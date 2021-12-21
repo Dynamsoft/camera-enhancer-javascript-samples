@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>camera-sample</title>
     <script src="https://unpkg.com/dynamsoft-camera-enhancer@2.0.3/dist/dce.js"></script>
-    <script src="./nanoid.js"></script>
     <style>
         * {
             padding: 0;
@@ -37,7 +36,7 @@
 
         .control-panel {
             width: 100%;
-            height: 200px;
+            height: 20%;
             position: absolute;
             bottom: 0;
             border: 1px solid black;
@@ -105,45 +104,51 @@
         </div>
     </div>
     <script>
-        console.log(nanoid());
-        (async ()=>{
+        let openCamera = document.querySelector('.openCamera')
+        let capture = document.querySelector('.capture')
+        let picGroup = document.querySelector('.picGroup')
+
+        let pReady
+        let cameraEnhancer
+
+        pReady = (async()=>{
             Dynamsoft.DCE.CameraEnhancer.engineResourcePath = "https://unpkg.com/dynamsoft-camera-enhancer@2.0.3/dist/";
             let enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance();
             document.getElementById('recognizerUI').appendChild(enhancer.getUIElement());
-            let openCamera = document.querySelector('.openCamera')
-            let capture = document.querySelector('.capture')
-            let picGroup = document.querySelector('.picGroup')
-            openCamera.addEventListener('click', async ()=>{
-                if(enhancer.isOpen()) {
-                    return
-                } else {
-                    enhancer.open()
-                }
-            })
-            capture.addEventListener('click', ()=>{
-                let canvas = document.querySelectorAll('canvas')
-                let item = document.createElement('div')
-                item.id = 'item'
-                if(canvas.length >= 5) {
-                    let items = document.querySelectorAll('#item')
-                    picGroup.removeChild(items[0])
-                } 
-                let frameData = enhancer.getFrame({
-                    regionBottom: 100,
-                    regionRight: 100,
-                    regionLeft: 0,
-                    regionTop: 0,
-                    regionMeasuredByPercentage: true
-                });
-                item.appendChild(frameData.canvas);
-                let download = document.createElement("a");
-                download.innerHTML = 'download'
-                download.download = nanoid(10);
-                download.href = frameData.canvas.toDataURL('img.png');
-                item.appendChild(download);
-                picGroup.appendChild(item)
-            })
-        })()
+        })();
+        openCamera.addEventListener('click', async ()=>{
+            await pReady;
+            if(enhancer.isOpen()) {
+                return
+            } else {
+                enhancer.open()
+            }
+        })
+        capture.addEventListener('click', ()=>{
+            await pReady;
+            if(!enhancer.isOpen()) return
+            let canvas = document.querySelectorAll('canvas')
+            let item = document.createElement('div')
+            item.id = 'item'
+            if(canvas.length >= 5) {
+                let items = document.querySelectorAll('#item')
+                picGroup.removeChild(items[0])
+            } 
+            let frameData = enhancer.getFrame({
+                regionBottom: 100,
+                regionRight: 100,
+                regionLeft: 0,
+                regionTop: 0,
+                regionMeasuredByPercentage: true
+            });
+            item.appendChild(frameData.canvas);
+            let download = document.createElement("a");
+            download.innerHTML = 'download'
+            download.download = 'capture'
+            download.href = frameData.canvas.toDataURL('img.png');
+            item.appendChild(download);
+            picGroup.appendChild(item)
+        })
     </script>
 </body>
 </html>
