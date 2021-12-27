@@ -6,7 +6,7 @@
   <title>test</title>
   <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@8.8.3/dist/dbr.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/eruda@2.4.1/eruda.min.js"></script>
-  <!-- <script type="text/javascript" src="../js/common.js"></script> -->
+  <script type="text/javascript" src="../js/common.js"></script>
 </head>
 <body>
   <script>
@@ -44,10 +44,10 @@
         if (results.length > 0) console.log(results);
       };
       scanner.onUnduplicatedRead = (txt, result) => {
-        // wo.evalJS("scanedbyvideo('"+ txt +"','"+ count +"');");
+        wo.evalJS("scanedbyvideo('"+ txt +"','"+ count +"');");
         count++;
         back();
-		    //alert(txt);
+	// alert(txt);
       };
       
       let bFirst = true;
