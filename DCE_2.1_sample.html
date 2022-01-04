@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/cube-dynamsoft-camera-enhancer@0.20220104111256.0/dist/dce.js"></script>
+    <title>DCE_2.1_sample</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        button {
+            border: 0;
+        }
+
+        .dce-sel-camera, .dce-sel-resolution {
+            width: 50% !important;
+            height: 30px;
+            top: -30px !important;
+            border: 0;
+            background-color: lightgray;
+        }
+
+        .dce-sel-camera {
+            border-right: 1px solid black;
+        }
+
+        .dce-sel-resolution {
+            left: 50% !important;
+        }
+
+        #recognizerUI {
+            position: absolute;
+            top: 30px;
+            bottom: 25%;
+            left: 0;
+            right: 0;
+            display: none;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 25%;
+            display: flex;
+            border-top: 1px solid black;
+            text-align: center;
+        }
+
+        footer .btn-group {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            border-right: 1px solid black;
+            padding: 0 5px;
+            width: 30%;
+        }
+
+        footer .btn-group button {
+            height: 15%;
+            border-radius: 5px;
+            background-color: rgb(211,211,211);
+        }
+
+        footer .frame {
+            width: 70%;
+            height: 100%;
+        }
+
+        footer .frame canvas {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="recognizerUI"></div>
+    <footer>
+        <div class="btn-group">
+            <button class="open-camera">open camera</button>
+            <button class="get-frame">get frame</button>
+            <select name="LineWidth" id="LineWidth">
+                <option value="">LineWidth</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select>
+            <select name="StrokeStyle" id="StrokeStyle">
+                <option value="">StrokeStyle</option>
+                <option value="skyblue">skyblue</option>
+                <option value="red">red</option>
+                <option value="purple">purple</option>
+            </select>
+            <select name="FillStyle" id="FillStyle">
+                <option value="">FillStyle</option>
+                <option value="skyblue">skyblue</option>
+                <option value="red">red</option>
+                <option value="purple">purple</option>
+            </select>
+            <select name="MaskFillStyle" id="MaskFillStyle">
+                <option value="">MaskFillStyle</option>
+                <option value="skyblue">skyblue</option>
+                <option value="red">red</option>
+                <option value="purple">purple</option>
+            </select>
+        </div>
+        <div class="frame"></div>
+    </footer>
+    <script>
+        let ui = document.querySelector('#recognizerUI')
+        let oc = document.querySelector('.open-camera')
+        let gf = document.querySelector('.get-frame')
+        let frame = document.querySelector('.frame')
+        let decorator = document.querySelector('#decorator')
+        let setLineWidth = document.querySelector('#LineWidth')
+        let setStrokeStyle = document.querySelector('#StrokeStyle')
+        let setFillStyle = document.querySelector('#FillStyle')
+        let setMaskFillStyle = document.querySelector('#MaskFillStyle')
+        let index = 1
+        let enhancer
+        
+        // create a DCE instance and bind the callback
+        let pReady = (async()=>{
+            Dynamsoft.DCE.CameraEnhancer.engineResourcePath = "https://unpkg.com/cube-dynamsoft-camera-enhancer@0.20220104111256.0/dist/"
+            enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance()
+            document.getElementById('recognizerUI').appendChild(enhancer.getUIElement())
+            const callbackCameraOpen = () => {
+                console.log("camera opened")
+            };
+            const callbackCameraClose = () => {
+                console.log("camera closeed")
+                setLineWidth.disabled = "disabled"
+                setStrokeStyle.disabled = "disabled"
+                setFillStyle.disabled = "disabled"
+                setMaskFillStyle.disabled = "disabled"
+            };
+            const callbackCameraChange = () => {
+                console.log("camera changed")
+            };
+            const callbackResolutionChange = () => {
+                console.log("camera resolution changed")
+            };
+            enhancer.on("cameraOpen", callbackCameraOpen);
+            enhancer.on("cameraClose", callbackCameraClose);
+            enhancer.on("cameraChange", callbackCameraChange);
+            enhancer.on("resolutionChange", callbackResolutionChange)
+            if(!enhancer.isOpen()) {
+                setLineWidth.disabled = "disabled"
+                setStrokeStyle.disabled = "disabled"
+                setFillStyle.disabled = "disabled"
+                setMaskFillStyle.disabled = "disabled"
+            }
+        })()
+        // set LineWidth
+        setLineWidth.addEventListener('change', ()=>{
+            let DecoratorInfo = enhancer.getViewDecorator()
+            if(setLineWidth.value === '10') {
+                enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],10)
+            } else if(setLineWidth.value === '15') {
+                enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],15)
+            } else if(setLineWidth.value === '20') {
+                enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],20)
+            }
+        })
+
+        // set StrokeStyle
+        setStrokeStyle.addEventListener('change', ()=>{
+            let DecoratorInfo = enhancer.getViewDecorator()
+            if(setStrokeStyle.value === 'skyblue') {
+                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgba(135, 206, 235, 1)')
+            } else if(setStrokeStyle.value === 'red') {
+                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgba(255, 0, 0, 1)')
+            } else if(setStrokeStyle.value === 'purple') {
+                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgba(128, 0, 128, 1)')
+            }
+        })
+        
+        // set FillStyle
+        setFillStyle.addEventListener('change', ()=>{
+            let DecoratorInfo = enhancer.getViewDecorator()
+            if(setFillStyle.value === 'skyblue') {
+                enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],'rgba(135, 206, 235, 0.3)')
+            } else if(setFillStyle.value === 'red') {
+                enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],'rgba(255, 0, 0, 0.3)')
+            } else if(setFillStyle.value === 'purple') {
+                enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],'rgba(128, 0, 128, 0.3)')
+            }
+        })
+
+        // set MaskFillStyle
+        setMaskFillStyle.addEventListener('change', ()=>{
+            let DecoratorInfo = enhancer.getViewDecorator()
+            if(setMaskFillStyle.value === 'skyblue') {
+                enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],'rgba(135, 206, 235, 0.3)')
+            } else if(setMaskFillStyle.value === 'red') {
+                enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],'rgba(255, 0, 0, 0.3)')
+            } else if(setMaskFillStyle.value === 'purple') {
+                enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],'rgba(128, 0, 128, 0.3)')
+            }
+        })
+        
+        // open camera
+        oc.addEventListener('click', async ()=>{
+            await pReady
+            if(enhancer.isOpen()) { 
+                return 
+            } else {
+                let area = {x: 10, y:10, width:80, height:80}
+                await enhancer.open(true)
+                setLineWidth.disabled = ""
+                setStrokeStyle.disabled = ""
+                setFillStyle.disabled = ""
+                setMaskFillStyle.disabled = ""
+                enhancer.setViewDecorator('rectangle', area)
+                ui.style.display = 'block'
+                let decorator = document.querySelector('.cvs-view-decorator')
+                let dec = ['rectangle','focus','crossline', 'crosshair']
+                decorator.addEventListener('click', () => {
+                    if(index === 4) index = 0
+                    enhancer.setViewDecorator(dec[dec.indexOf('rectangle')+index++], area)
+                })
+            }
+            
+        })
+
+        // get frame
+        gf.addEventListener('click', async ()=>{
+            await pReady
+            if(!enhancer.isOpen()) {
+                return
+            } else {
+                let canvas = document.querySelectorAll('canvas')
+                if(canvas.length > 1) {
+                    frame.innerHTML = ''
+                } 
+                let frameData = enhancer.getFrame({
+                    regionBottom: 100,
+                    regionRight: 100,
+                    regionLeft: 0,
+                    regionTop: 0,
+                    regionMeasuredByPercentage: true
+                });
+                frame.appendChild(frameData.canvas)
+            }
+        })
+    </script>
+</body>
+</html>
+
+<!-- 
+    if(!enhancer){
+    Dynamsoft.DCE.CameraEnhancer.engineResourcePath = "https://unpkg.com/cube-dynamsoft-camera-enhancer@0.20220104111256.0/dist/"
+    enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance()
+    document.getElementById('recognizerUI').appendChild(enhancer.getUIElement()); 
+    console.log(123);
+}
+ -->
