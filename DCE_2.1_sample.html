@@ -227,6 +227,14 @@
                 decorator.addEventListener('click', () => {
                     if(index === 4) index = 0
                     enhancer.setViewDecorator(dec[dec.indexOf('rectangle')+index++], area)
+                    let currentDec = enhancer.getViewDecorator().type[0]
+                    if(currentDec === 'crossline' || currentDec === 'crosshair') {
+                        setFillStyle.disabled = "disabled"
+                        setMaskFillStyle.disabled = "disabled"
+                    } else if(currentDec === 'rectangle' || currentDec === 'focus') {
+                        setFillStyle.disabled = ""
+                        setMaskFillStyle.disabled = ""
+                    }
                 })
             }
             
@@ -255,12 +263,3 @@
     </script>
 </body>
 </html>
-
-<!-- 
-    if(!enhancer){
-    Dynamsoft.DCE.CameraEnhancer.engineResourcePath = "https://unpkg.com/cube-dynamsoft-camera-enhancer@0.20220104111256.0/dist/"
-    enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance()
-    document.getElementById('recognizerUI').appendChild(enhancer.getUIElement()); 
-    console.log(123);
-}
- -->
