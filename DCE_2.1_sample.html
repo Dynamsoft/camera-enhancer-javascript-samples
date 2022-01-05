@@ -28,7 +28,6 @@
             bottom: 30%;
             left: 0;
             right: 0;
-            display: none;
         }
 
         footer {
@@ -132,21 +131,20 @@
         </div>
         <div class="frame">
             <div class="set-frame">
-                <input type="number" placeholder="left scan region">
-                <input type="number" placeholder="right scan region">
+                <input type="number" placeholder="scan region left">
+                <input type="number" placeholder="scan region right">
                 <select id="unit-selection">
                     <option value="%">%</option>
                     <option value="px">px</option>
                 </select>
-                <input type="number" placeholder="top scan region">
-                <input type="number" placeholder="bottom scan region">
+                <input type="number" placeholder="scan region top">
+                <input type="number" placeholder="scan region bottom">
                 <button class="set-scan-region">set</button>
             </div>
             <div class="show-frame"></div>
         </div>
     </footer>
     <script>
-        let ui = document.querySelector('#recognizerUI');
         let oc = document.querySelector('.open-camera');
         let gf = document.querySelector('.get-frame');
         let frame = document.querySelector('.show-frame');
@@ -166,7 +164,6 @@
         let pReady = (async()=>{
             // Dynamsoft.DCE.CameraEnhancer.engineResourcePath = "https://unpkg.com/cube-dynamsoft-camera-enhancer@0.20220104111256.0/dist/"
             enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance();
-            document.querySelector('#recognizerUI').appendChild(enhancer.getUIElement());
             const callbackCameraOpen = () => {
                 console.log("camera opened");
             };
@@ -251,6 +248,7 @@
                 return;
             } else {
                 area = {x: 10, y:10, width:80, height:80};
+                document.querySelector('#recognizerUI').appendChild(enhancer.getUIElement());
                 await enhancer.open(true);
                 // A decorator must be set to select a style
                 if(enhancer.getViewDecorator().type.length !== 0) {
@@ -260,7 +258,6 @@
                     setMaskFillStyle.disabled = "";
                 }
                 setDecorator.disabled = '';
-                ui.style.display = 'block';
             }
             
         })
