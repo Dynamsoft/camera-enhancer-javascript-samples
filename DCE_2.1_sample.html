@@ -22,25 +22,9 @@
             border: 0;
         }
 
-        .dce-sel-camera, .dce-sel-resolution {
-            width: 50% !important;
-            height: 30px;
-            top: -30px !important;
-            border: 0;
-            background-color: lightgray;
-        }
-
-        .dce-sel-camera {
-            border-right: 1px solid black;
-        }
-
-        .dce-sel-resolution {
-            left: 50% !important;
-        }
-
         #recognizerUI {
             position: absolute;
-            top: 30px;
+            top: 0;
             bottom: 30%;
             left: 0;
             right: 0;
@@ -90,6 +74,11 @@
             width: 40%;
         }
 
+        footer .frame .set-frame .set-scan-region {
+            width: 20%;
+            border: 1px solid black;
+        }
+
         footer .frame .set-frame select {
             width: 20%;
         }
@@ -109,47 +98,49 @@
         <div class="btn-group">
             <button class="open-camera">open camera</button>
             <button class="get-frame">get frame</button>
-            <select name="LineWidth" id="LineWidth">
-                <option value="">LineWidth</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-            </select>
-            <select name="StrokeStyle" id="StrokeStyle">
-                <option value="">StrokeStyle</option>
-                <option value="skyblue">skyblue</option>
-                <option value="red">red</option>
-                <option value="purple">purple</option>
-            </select>
-            <select name="FillStyle" id="FillStyle">
-                <option value="">FillStyle</option>
-                <option value="rgba(135, 206, 235, 0.3)">skyblue</option>
-                <option value="rgba(255, 0, 0, 0.3)">red</option>
-                <option value="rgba(128, 0, 128, 0.3)">purple</option>
-            </select>
-            <select name="MaskFillStyle" id="MaskFillStyle">
-                <option value="">MaskFillStyle</option>
-                <option value="rgba(135, 206, 235, 0.3)">skyblue</option>
-                <option value="rgba(255, 0, 0, 0.3)">red</option>
-                <option value="rgba(128, 0, 128, 0.3)">purple</option>
-            </select>
             <select name="decorator" id="decorator">
+                <option value="decorator">setViewDecorator</option>
                 <option value="rectangle">rectangle</option>
                 <option value="focus">focus</option>
                 <option value="crossline">crossline</option>
                 <option value="crosshair">crosshair</option>
             </select>
+            <select name="LineWidth" id="LineWidth">
+                <option value="">setViewDecoratorLineWidth</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select>
+            <select name="StrokeStyle" id="StrokeStyle">
+                <option value="">setViewDecoratorStrokeStyle</option>
+                <option value="skyblue">skyblue</option>
+                <option value="red">red</option>
+                <option value="purple">purple</option>
+            </select>
+            <select name="FillStyle" id="FillStyle">
+                <option value="transparent">setViewDecoratorFillStyle</option>
+                <option value="rgba(135, 206, 235, 0.3)">skyblue</option>
+                <option value="rgba(255, 0, 0, 0.3)">red</option>
+                <option value="rgba(128, 0, 128, 0.3)">purple</option>
+            </select>
+            <select name="MaskFillStyle" id="MaskFillStyle">
+                <option value="transparent">setViewDecoratorMaskFillStyle</option>
+                <option value="rgba(135, 206, 235, 0.3)">skyblue</option>
+                <option value="rgba(255, 0, 0, 0.3)">red</option>
+                <option value="rgba(128, 0, 128, 0.3)">purple</option>
+            </select>
         </div>
         <div class="frame">
             <div class="set-frame">
-                <input type="number" placeholder="left(0)">
-                <input type="number" placeholder="right(100)">
+                <input type="number" placeholder="left scan region">
+                <input type="number" placeholder="right scan region">
                 <select id="unit-selection">
                     <option value="%">%</option>
                     <option value="px">px</option>
                 </select>
-                <input type="number" placeholder="top(0)">
-                <input type="number" placeholder="bottom(100)">
+                <input type="number" placeholder="top scan region">
+                <input type="number" placeholder="bottom scan region">
+                <button class="set-scan-region">set</button>
             </div>
             <div class="show-frame"></div>
         </div>
@@ -167,6 +158,7 @@
         let setDecorator = document.querySelector('#decorator');
         let inps = document.querySelectorAll('input')
         let unitSelection = document.querySelector('#unit-selection')
+        let setScanRegion = document.querySelector('.set-scan-region')
         let enhancer;
         let area;
         
@@ -178,6 +170,7 @@
             const callbackCameraOpen = () => {
                 console.log("camera opened");
             };
+            // if close camera, should set the selection box to not selectable
             const callbackCameraClose = () => {
                 console.log("camera closeed");
                 setLineWidth.disabled = "disabled";
@@ -207,13 +200,21 @@
         // set LineWidth
         setLineWidth.addEventListener('change', ()=>{
             let DecoratorInfo = enhancer.getViewDecorator();
-            enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],setLineWidth.value*1);
+            if(setLineWidth.value === '') {
+                enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],5);
+            } else {
+                enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],parseInt(setLineWidth.value));
+            }
         })
 
         // set StrokeStyle
         setStrokeStyle.addEventListener('change', ()=>{
             let DecoratorInfo = enhancer.getViewDecorator();
-            enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],setStrokeStyle.value);
+            if(setStrokeStyle.value === '') {
+                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgb(254,142,20)');
+            } else {
+                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],setStrokeStyle.value);
+            }
         })
         
         // set FillStyle
@@ -230,12 +231,15 @@
 
         // set Decorator
         setDecorator.addEventListener('change', ()=>{
+            // if decorator is crossline or crosshair, can not set FillStyle and MaskFillStyle
             if(setDecorator.value === 'crossline' || setDecorator.value === 'crosshair') {
                 setFillStyle.disabled = "disabled";
                 setMaskFillStyle.disabled = "disabled";
             } else if(setDecorator.value === 'rectangle' || setDecorator.value === 'focus') {
                 setFillStyle.disabled = "";
                 setMaskFillStyle.disabled = "";
+                setLineWidth.disabled = "";
+                setStrokeStyle.disabled = "";
             }
             enhancer.setViewDecorator(setDecorator.value, area);
         })
@@ -248,15 +252,29 @@
             } else {
                 area = {x: 10, y:10, width:80, height:80};
                 await enhancer.open(true);
-                setLineWidth.disabled = "";
-                setStrokeStyle.disabled = "";
-                setFillStyle.disabled = "";
-                setMaskFillStyle.disabled = "";
+                // A decorator must be set to select a style
+                if(enhancer.getViewDecorator().type.length !== 0) {
+                    setLineWidth.disabled = "";
+                    setStrokeStyle.disabled = "";
+                    setFillStyle.disabled = "";
+                    setMaskFillStyle.disabled = "";
+                }
                 setDecorator.disabled = '';
-                enhancer.setViewDecorator(setDecorator.value, area);
                 ui.style.display = 'block';
             }
             
+        })
+
+        setScanRegion.addEventListener('click', ()=>{
+            // set scan region
+            enhancer.setScanRegion({
+                regionLeft: parseInt(inps[0].value) || 0,
+                regionTop: parseInt(inps[2].value) || 0, 
+                regionRight: parseInt(inps[1].value) || 100, 
+                regionBottom: parseInt(inps[3].value) || 100, 
+                // if true use %, if false use px
+                regionMeasuredByPercentage: unitSelection.value === '%' ? true : false
+            });
         })
 
         // get frame
@@ -265,18 +283,8 @@
             if(!enhancer.isOpen()) {
                 return;
             } else {
-                let canvas = document.querySelectorAll('canvas')
-                if(canvas.length > 1) {
-                    frame.innerHTML = '';
-                }
-                enhancer.setScanRegion({
-                    regionLeft: inps[0].value*1 || 0,
-                    regionTop: inps[2].value*1 || 0, 
-                    regionRight: inps[1].value*1 || 100, 
-                    regionBottom: inps[3].value*1 || 100, 
-                    regionMeasuredByPercentage: unitSelection.value === '%' ? true : false
-                });
                 let frameData = enhancer.getFrame();
+                frame.innerHTML = '';
                 frame.appendChild(frameData.canvas);
             }
         })
