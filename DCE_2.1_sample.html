@@ -41,7 +41,7 @@
         #recognizerUI {
             position: absolute;
             top: 30px;
-            bottom: 25%;
+            bottom: 30%;
             left: 0;
             right: 0;
             display: none;
@@ -51,7 +51,7 @@
             position: fixed;
             bottom: 0;
             width: 100%;
-            height: 25%;
+            height: 30%;
             display: flex;
             border-top: 1px solid black;
             text-align: center;
@@ -75,9 +75,30 @@
         footer .frame {
             width: 70%;
             height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
-        footer .frame canvas {
+        footer .frame .set-frame {
+            height: 25%;
+            border-bottom: 1px solid black;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        footer .frame .set-frame input {
+            width: 40%;
+        }
+
+        footer .frame .set-frame select {
+            width: 20%;
+        }
+
+        footer .frame .show-frame {
+            height: 75%;
+        }
+
+        footer .frame .show-frame canvas {
             height: 100%;
         }
     </style>
@@ -102,162 +123,161 @@
             </select>
             <select name="FillStyle" id="FillStyle">
                 <option value="">FillStyle</option>
-                <option value="skyblue">skyblue</option>
-                <option value="red">red</option>
-                <option value="purple">purple</option>
+                <option value="rgba(135, 206, 235, 0.3)">skyblue</option>
+                <option value="rgba(255, 0, 0, 0.3)">red</option>
+                <option value="rgba(128, 0, 128, 0.3)">purple</option>
             </select>
             <select name="MaskFillStyle" id="MaskFillStyle">
                 <option value="">MaskFillStyle</option>
-                <option value="skyblue">skyblue</option>
-                <option value="red">red</option>
-                <option value="purple">purple</option>
+                <option value="rgba(135, 206, 235, 0.3)">skyblue</option>
+                <option value="rgba(255, 0, 0, 0.3)">red</option>
+                <option value="rgba(128, 0, 128, 0.3)">purple</option>
+            </select>
+            <select name="decorator" id="decorator">
+                <option value="rectangle">rectangle</option>
+                <option value="focus">focus</option>
+                <option value="crossline">crossline</option>
+                <option value="crosshair">crosshair</option>
             </select>
         </div>
-        <div class="frame"></div>
+        <div class="frame">
+            <div class="set-frame">
+                <input type="number" placeholder="left(0)">
+                <input type="number" placeholder="right(100)">
+                <select id="unit-selection">
+                    <option value="%">%</option>
+                    <option value="px">px</option>
+                </select>
+                <input type="number" placeholder="top(0)">
+                <input type="number" placeholder="bottom(100)">
+            </div>
+            <div class="show-frame"></div>
+        </div>
     </footer>
     <script>
-        let ui = document.querySelector('#recognizerUI')
-        let oc = document.querySelector('.open-camera')
-        let gf = document.querySelector('.get-frame')
-        let frame = document.querySelector('.frame')
-        let decorator = document.querySelector('#decorator')
-        let setLineWidth = document.querySelector('#LineWidth')
-        let setStrokeStyle = document.querySelector('#StrokeStyle')
-        let setFillStyle = document.querySelector('#FillStyle')
-        let setMaskFillStyle = document.querySelector('#MaskFillStyle')
-        let index = 1
-        let enhancer
+        let ui = document.querySelector('#recognizerUI');
+        let oc = document.querySelector('.open-camera');
+        let gf = document.querySelector('.get-frame');
+        let frame = document.querySelector('.show-frame');
+        let decorator = document.querySelector('#decorator');
+        let setLineWidth = document.querySelector('#LineWidth');
+        let setStrokeStyle = document.querySelector('#StrokeStyle');
+        let setFillStyle = document.querySelector('#FillStyle');
+        let setMaskFillStyle = document.querySelector('#MaskFillStyle');
+        let setDecorator = document.querySelector('#decorator');
+        let inps = document.querySelectorAll('input')
+        let unitSelection = document.querySelector('#unit-selection')
+        let enhancer;
+        let area;
         
         // create a DCE instance and bind the callback
         let pReady = (async()=>{
-            Dynamsoft.DCE.CameraEnhancer.engineResourcePath = "https://unpkg.com/cube-dynamsoft-camera-enhancer@0.20220104111256.0/dist/"
-            enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance()
-            document.getElementById('recognizerUI').appendChild(enhancer.getUIElement())
+            // Dynamsoft.DCE.CameraEnhancer.engineResourcePath = "https://unpkg.com/cube-dynamsoft-camera-enhancer@0.20220104111256.0/dist/"
+            enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance();
+            document.querySelector('#recognizerUI').appendChild(enhancer.getUIElement());
             const callbackCameraOpen = () => {
-                console.log("camera opened")
+                console.log("camera opened");
             };
             const callbackCameraClose = () => {
-                console.log("camera closeed")
-                setLineWidth.disabled = "disabled"
-                setStrokeStyle.disabled = "disabled"
-                setFillStyle.disabled = "disabled"
-                setMaskFillStyle.disabled = "disabled"
+                console.log("camera closeed");
+                setLineWidth.disabled = "disabled";
+                setStrokeStyle.disabled = "disabled";
+                setFillStyle.disabled = "disabled";
+                setMaskFillStyle.disabled = "disabled";
+                setDecorator.disabled = 'disabled';
             };
             const callbackCameraChange = () => {
-                console.log("camera changed")
+                console.log("camera changed");
             };
             const callbackResolutionChange = () => {
-                console.log("camera resolution changed")
+                console.log("camera resolution changed");
             };
             enhancer.on("cameraOpen", callbackCameraOpen);
             enhancer.on("cameraClose", callbackCameraClose);
             enhancer.on("cameraChange", callbackCameraChange);
-            enhancer.on("resolutionChange", callbackResolutionChange)
+            enhancer.on("resolutionChange", callbackResolutionChange);
             if(!enhancer.isOpen()) {
-                setLineWidth.disabled = "disabled"
-                setStrokeStyle.disabled = "disabled"
-                setFillStyle.disabled = "disabled"
-                setMaskFillStyle.disabled = "disabled"
+                setLineWidth.disabled = "disabled";
+                setStrokeStyle.disabled = "disabled";
+                setFillStyle.disabled = "disabled";
+                setMaskFillStyle.disabled = "disabled";
+                setDecorator.disabled = 'disabled';
             }
         })()
         // set LineWidth
         setLineWidth.addEventListener('change', ()=>{
-            let DecoratorInfo = enhancer.getViewDecorator()
-            if(setLineWidth.value === '10') {
-                enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],10)
-            } else if(setLineWidth.value === '15') {
-                enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],15)
-            } else if(setLineWidth.value === '20') {
-                enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],20)
-            }
+            let DecoratorInfo = enhancer.getViewDecorator();
+            enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],setLineWidth.value*1);
         })
 
         // set StrokeStyle
         setStrokeStyle.addEventListener('change', ()=>{
-            let DecoratorInfo = enhancer.getViewDecorator()
-            if(setStrokeStyle.value === 'skyblue') {
-                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgba(135, 206, 235, 1)')
-            } else if(setStrokeStyle.value === 'red') {
-                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgba(255, 0, 0, 1)')
-            } else if(setStrokeStyle.value === 'purple') {
-                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgba(128, 0, 128, 1)')
-            }
+            let DecoratorInfo = enhancer.getViewDecorator();
+            enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],setStrokeStyle.value);
         })
         
         // set FillStyle
         setFillStyle.addEventListener('change', ()=>{
-            let DecoratorInfo = enhancer.getViewDecorator()
-            if(setFillStyle.value === 'skyblue') {
-                enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],'rgba(135, 206, 235, 0.3)')
-            } else if(setFillStyle.value === 'red') {
-                enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],'rgba(255, 0, 0, 0.3)')
-            } else if(setFillStyle.value === 'purple') {
-                enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],'rgba(128, 0, 128, 0.3)')
-            }
+            let DecoratorInfo = enhancer.getViewDecorator();
+            enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],setFillStyle.value);
         })
 
         // set MaskFillStyle
         setMaskFillStyle.addEventListener('change', ()=>{
-            let DecoratorInfo = enhancer.getViewDecorator()
-            if(setMaskFillStyle.value === 'skyblue') {
-                enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],'rgba(135, 206, 235, 0.3)')
-            } else if(setMaskFillStyle.value === 'red') {
-                enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],'rgba(255, 0, 0, 0.3)')
-            } else if(setMaskFillStyle.value === 'purple') {
-                enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],'rgba(128, 0, 128, 0.3)')
-            }
+            let DecoratorInfo = enhancer.getViewDecorator();
+            enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],setMaskFillStyle.value);
         })
-        
+
+        // set Decorator
+        setDecorator.addEventListener('change', ()=>{
+            if(setDecorator.value === 'crossline' || setDecorator.value === 'crosshair') {
+                setFillStyle.disabled = "disabled";
+                setMaskFillStyle.disabled = "disabled";
+            } else if(setDecorator.value === 'rectangle' || setDecorator.value === 'focus') {
+                setFillStyle.disabled = "";
+                setMaskFillStyle.disabled = "";
+            }
+            enhancer.setViewDecorator(setDecorator.value, area);
+        })
+
         // open camera
         oc.addEventListener('click', async ()=>{
-            await pReady
+            await pReady;
             if(enhancer.isOpen()) { 
-                return 
+                return;
             } else {
-                let area = {x: 10, y:10, width:80, height:80}
-                await enhancer.open(true)
-                setLineWidth.disabled = ""
-                setStrokeStyle.disabled = ""
-                setFillStyle.disabled = ""
-                setMaskFillStyle.disabled = ""
-                enhancer.setViewDecorator('rectangle', area)
-                ui.style.display = 'block'
-                let decorator = document.querySelector('.cvs-view-decorator')
-                let dec = ['rectangle','focus','crossline', 'crosshair']
-                decorator.addEventListener('click', () => {
-                    if(index === 4) index = 0
-                    enhancer.setViewDecorator(dec[dec.indexOf('rectangle')+index++], area)
-                    let currentDec = enhancer.getViewDecorator().type[0]
-                    if(currentDec === 'crossline' || currentDec === 'crosshair') {
-                        setFillStyle.disabled = "disabled"
-                        setMaskFillStyle.disabled = "disabled"
-                    } else if(currentDec === 'rectangle' || currentDec === 'focus') {
-                        setFillStyle.disabled = ""
-                        setMaskFillStyle.disabled = ""
-                    }
-                })
+                area = {x: 10, y:10, width:80, height:80};
+                await enhancer.open(true);
+                setLineWidth.disabled = "";
+                setStrokeStyle.disabled = "";
+                setFillStyle.disabled = "";
+                setMaskFillStyle.disabled = "";
+                setDecorator.disabled = '';
+                enhancer.setViewDecorator(setDecorator.value, area);
+                ui.style.display = 'block';
             }
             
         })
 
         // get frame
         gf.addEventListener('click', async ()=>{
-            await pReady
+            await pReady;
             if(!enhancer.isOpen()) {
-                return
+                return;
             } else {
                 let canvas = document.querySelectorAll('canvas')
                 if(canvas.length > 1) {
-                    frame.innerHTML = ''
-                } 
-                let frameData = enhancer.getFrame({
-                    regionBottom: 100,
-                    regionRight: 100,
-                    regionLeft: 0,
-                    regionTop: 0,
-                    regionMeasuredByPercentage: true
+                    frame.innerHTML = '';
+                }
+                enhancer.setScanRegion({
+                    regionLeft: inps[0].value*1 || 0,
+                    regionTop: inps[2].value*1 || 0, 
+                    regionRight: inps[1].value*1 || 100, 
+                    regionBottom: inps[3].value*1 || 100, 
+                    regionMeasuredByPercentage: unitSelection.value === '%' ? true : false
                 });
-                frame.appendChild(frameData.canvas)
+                let frameData = enhancer.getFrame();
+                frame.appendChild(frameData.canvas);
             }
         })
     </script>
