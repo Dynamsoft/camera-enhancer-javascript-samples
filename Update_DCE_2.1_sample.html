@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/cube-dynamsoft-camera-enhancer@0.20220110152526.0/dist/dce.js"></script>
+    <title>DCE_2.1_sample</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        button {
+            border: 0;
+        }
+
+        #recognizerUI {
+            position: absolute;
+            top: 0;
+            bottom: 40%;
+            left: 0;
+            right: 0;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 40%;
+            display: flex;
+            border-top: 1px solid black;
+            text-align: center;
+        }
+
+        footer .btn-group {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            border-right: 1px solid black;
+            padding: 0 5px;
+            width: 30%;
+        }
+
+        footer .btn-group button {
+            height: 10%;
+            border-radius: 5px;
+            background-color: rgb(211,211,211);
+        }
+
+        footer .frame {
+            width: 70%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        footer .frame .set-frame {
+            height: 28%;
+            border-bottom: 1px solid black;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        footer .frame .set-frame .get-visible-region {
+            border: 1px solid #000;
+        }
+
+        footer .frame .set-frame input {
+            width: 40%;
+        }
+
+        footer .frame .set-frame .set-scan-region {
+            width: 20%;
+            border: 1px solid black;
+        }
+
+        footer .frame .set-frame select {
+            width: 20%;
+        }
+
+        footer .frame .show-frame {
+            height: 72%;
+        }
+
+        footer .frame .show-frame canvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="recognizerUI"></div>
+    <footer>
+        <div class="btn-group">
+            <button class="open-camera">open camera</button>
+            <button class="get-frame">get frame</button>
+            <button class="set-video-fit">set video fit</button>
+            <button class="switch-fetch-loop">start/stop fetch loop</button>
+            <select name="decorator" id="decorator">
+                <option value="decorator">setViewDecorator</option>
+                <option value="rectangle">rectangle</option>
+                <option value="focus">focus</option>
+                <option value="crossline">crossline</option>
+                <option value="crosshair">crosshair</option>
+            </select>
+            <select name="LineWidth" id="LineWidth">
+                <option value="">setViewDecoratorLineWidth</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select>
+            <select name="StrokeStyle" id="StrokeStyle">
+                <option value="">setViewDecoratorStrokeStyle</option>
+                <option value="skyblue">skyblue</option>
+                <option value="red">red</option>
+                <option value="purple">purple</option>
+            </select>
+            <select name="FillStyle" id="FillStyle">
+                <option value="transparent">setViewDecoratorFillStyle</option>
+                <option value="rgba(135, 206, 235, 0.3)">skyblue</option>
+                <option value="rgba(255, 0, 0, 0.3)">red</option>
+                <option value="rgba(128, 0, 128, 0.3)">purple</option>
+            </select>
+            <select name="MaskFillStyle" id="MaskFillStyle">
+                <option value="transparent">setViewDecoratorMaskFillStyle</option>
+                <option value="rgba(135, 206, 235, 0.3)">skyblue</option>
+                <option value="rgba(255, 0, 0, 0.3)">red</option>
+                <option value="rgba(128, 0, 128, 0.3)">purple</option>
+            </select>
+        </div>
+        <div class="frame">
+            <div class="set-frame">
+                <input type="number" placeholder="scan region left">
+                <input type="number" placeholder="scan region right">
+                <select id="unit-selection">
+                    <option value="%">%</option>
+                    <option value="px">px</option>
+                </select>
+                <input type="number" placeholder="scan region top">
+                <input type="number" placeholder="scan region bottom">
+                <button class="set-scan-region">set</button>
+                <button class="get-visible-region" style="flex: 1">get visible region</button>
+                <select id="setMaskLineWidth" style="flex: 1">
+                    <option value="setMaskLineWidth">setMaskLineWidth</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                </select>
+                <select id="setMaskStrokeStyle" style="flex: 1">
+                    <option value="setMaskStrokeStyle">setMaskStrokeStyle</option>
+                    <option value="skyblue">skyblue</option>
+                    <option value="red">red</option>
+                    <option value="purple">purple</option>
+                </select>
+                <select id="setMaskFillStyle" style="flex: 1">
+                    <option value="rgba(0,0,0,0.6)">setMaskFillStyle</option>
+                    <option value="rgba(135, 206, 235, 0.6)">skyblue</option>
+                    <option value="rgba(255, 0, 0, 0.6)">red</option>
+                    <option value="rgba(128, 0, 128, 0.6)">purple</option>
+                </select>
+            </div>
+            <div class="show-frame"></div>
+        </div>
+    </footer>
+    <script>
+        let oc = document.querySelector('.open-camera');
+        let gf = document.querySelector('.get-frame');
+        let frame = document.querySelector('.show-frame');
+        let decorator = document.querySelector('#decorator');
+        let setLineWidth = document.querySelector('#LineWidth');
+        let setStrokeStyle = document.querySelector('#StrokeStyle');
+        let setFillStyle = document.querySelector('#FillStyle');
+        let setDecMaskFillStyle = document.querySelector('#MaskFillStyle');
+        let setDecorator = document.querySelector('#decorator');
+        let inps = document.querySelectorAll('input');
+        let unitSelection = document.querySelector('#unit-selection');
+        let setScanRegion = document.querySelector('.set-scan-region');
+        let setVideoFit = document.querySelector('.set-video-fit');
+        let getVisibleRegion = document.querySelector('.get-visible-region');
+        let setMaskLineWidth = document.querySelector('#setMaskLineWidth');
+        let setMaskStrokeStyle = document.querySelector('#setMaskStrokeStyle');
+        let setMaskFillStyle = document.querySelector('#setMaskFillStyle');
+        let switchFetchLoop = document.querySelector('.switch-fetch-loop')
+        let enhancer;
+        let area;
+        let overlay;
+        let timer;
+        
+        // create a DCE instance and bind the callback
+        let pReady = (async()=>{
+            // Dynamsoft.DCE.CameraEnhancer.engineResourcePath = "https://unpkg.com/cube-dynamsoft-camera-enhancer@0.20220104111256.0/dist/"
+            enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance();
+/*             enhancer.setScanRegion({
+                regionLeft: 10,
+                regionTop: 10, 
+                regionRight: 90, 
+                regionBottom: 90, 
+                // if true use %, if false use px
+                regionMeasuredByPercentage: unitSelection.value === '%' ? true : false
+            }); */
+            const callbackCameraOpen = () => {
+                console.log("camera opened");
+            };
+            // if close camera, should set the selection box to not selectable
+            const callbackCameraClose = () => {
+                console.log("camera closeed");
+                setLineWidth.disabled = "disabled";
+                setStrokeStyle.disabled = "disabled";
+                setFillStyle.disabled = "disabled";
+                setDecMaskFillStyle.disabled = "disabled";
+                setDecorator.disabled = 'disabled';
+                setMaskLineWidth.disabled = 'disabled';
+                setMaskStrokeStyle.disabled = 'disabled';
+                setMaskFillStyle.disabled = 'disabled';
+            };
+            const callbackCameraChange = () => {
+                console.log("camera changed");
+            };
+            const callbackResolutionChange = () => {
+                console.log("camera resolution changed");
+            };
+            const callbackPlayed = () => {
+                console.log('played');
+            };
+            const callbackSingleFrameAcquired = () => {
+                console.log('single frame acquired');
+            };
+            enhancer.on("cameraOpen", callbackCameraOpen);
+            enhancer.on("cameraClose", callbackCameraClose);
+            enhancer.on("cameraChange", callbackCameraChange);
+            enhancer.on("resolutionChange", callbackResolutionChange);
+            enhancer.on("played", callbackPlayed);
+            enhancer.on("singleFrameAcquired",callbackSingleFrameAcquired);
+            if(!enhancer.isOpen()) {
+                setLineWidth.disabled = "disabled";
+                setStrokeStyle.disabled = "disabled";
+                setFillStyle.disabled = "disabled";
+                setDecMaskFillStyle.disabled = "disabled";
+                setDecorator.disabled = 'disabled';
+                setMaskLineWidth.disabled = 'disabled';
+                setMaskStrokeStyle.disabled = 'disabled';
+                setMaskFillStyle.disabled = 'disabled';
+            }
+        })()
+        
+        // set LineWidth
+        setLineWidth.addEventListener('change', ()=>{
+            let DecoratorInfo = enhancer.getViewDecorator();
+            if(setLineWidth.value === '') {
+                enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],5);
+            } else {
+                enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],parseInt(setLineWidth.value));
+            }
+        })
+
+        // set StrokeStyle
+        setStrokeStyle.addEventListener('change', ()=>{
+            let DecoratorInfo = enhancer.getViewDecorator();
+            if(setStrokeStyle.value === '') {
+                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgb(254,142,20)');
+            } else {
+                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],setStrokeStyle.value);
+            }
+        })
+        
+        // set FillStyle
+        setFillStyle.addEventListener('change', ()=>{
+            let DecoratorInfo = enhancer.getViewDecorator();
+            enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],setFillStyle.value);
+        })
+
+        // set MaskFillStyle
+        setDecMaskFillStyle.addEventListener('change', ()=>{
+            let DecoratorInfo = enhancer.getViewDecorator();
+            enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],setDecMaskFillStyle.value);
+        })
+
+        // set Decorator
+        setDecorator.addEventListener('change', ()=>{
+            // if decorator is crossline or crosshair, can not set FillStyle and MaskFillStyle
+            if(setDecorator.value === 'crossline' || setDecorator.value === 'crosshair') {
+                setFillStyle.disabled = "disabled";
+                setDecMaskFillStyle.disabled = "disabled";
+            } else if(setDecorator.value === 'rectangle' || setDecorator.value === 'focus') {
+                setFillStyle.disabled = "";
+                setDecMaskFillStyle.disabled = "";
+                setLineWidth.disabled = "";
+                setStrokeStyle.disabled = "";
+            }
+            enhancer.setViewDecorator(setDecorator.value, area);
+        })
+
+        // open camera
+        oc.addEventListener('click', async ()=>{
+            await pReady;
+            if(enhancer.isOpen()) { 
+                return;
+            } else {
+                area = {x: 10, y:10, width:80, height:80};
+                document.querySelector('#recognizerUI').appendChild(enhancer.getUIElement());
+                await enhancer.open(true);
+                overlay = enhancer.addScanRegionOverlayCanvas();
+                let ctx = overlay.getContext('2d');
+                ctx.font="50px Arial";
+                ctx.fillText('Dynamsoft Camera Enhancer Scan Region', 160,380);
+                if(enhancer.getViewDecorator().type.length !== 0) {
+                    setLineWidth.disabled = "";
+                    setStrokeStyle.disabled = "";
+                    setFillStyle.disabled = "";
+                    setDecMaskFillStyle.disabled = "";
+                }
+                setDecorator.disabled = '';
+                setMaskLineWidth.disabled = '';
+                setMaskStrokeStyle.disabled = '';
+                setMaskFillStyle.disabled = '';
+            }
+        })
+
+        // set scan region
+        setScanRegion.addEventListener('click', ()=>{
+            // set scan region
+            enhancer.setScanRegion({
+                regionLeft: parseInt(inps[0].value) || 0,
+                regionTop: parseInt(inps[2].value) || 0, 
+                regionRight: parseInt(inps[1].value) || 100, 
+                regionBottom: parseInt(inps[3].value) || 100, 
+                // if true use %, if false use px
+                regionMeasuredByPercentage: unitSelection.value === '%' ? true : false
+            });
+            let ctx = overlay.getContext('2d');
+            ctx.font="50px Arial";
+            ctx.fillText('Dynamsoft Camera Enhancer Scan Region',200, 380);
+        })
+
+        // set scan region linewidth
+        setMaskLineWidth.addEventListener('change', () => {
+            if(setMaskLineWidth.value === 'setMaskLineWidth') {
+                enhancer.setScanRegionMaskStyle({lineWidth: 3});
+            } else {
+                enhancer.setScanRegionMaskStyle({lineWidth: parseInt(setMaskLineWidth.value)});
+            }
+            
+        })
+
+        // set scan region stroke
+        setMaskStrokeStyle.addEventListener('change', () => {
+            if(setMaskStrokeStyle.value === 'setMaskStrokeStyle') {
+                enhancer.setScanRegionMaskStyle({strokeStyle: 'rgb(254,142,20)'});
+            } else {
+                enhancer.setScanRegionMaskStyle({strokeStyle: setMaskStrokeStyle.value});
+            }
+        })
+
+        // set scan region fill
+        setMaskFillStyle.addEventListener('change', () => {
+            enhancer.setScanRegionMaskStyle({fillStyle: setMaskFillStyle.value});
+        })
+
+        // get frame
+        gf.addEventListener('click', async ()=>{
+            await pReady;
+            if(!enhancer.isOpen()) {
+                return;
+            } else {
+                let frameData = enhancer.getFrame();
+                frame.innerHTML = '';
+                frame.appendChild(frameData.canvas);
+            }
+        })
+
+        // set video fit
+        setVideoFit.addEventListener('click', () => {
+            if(!enhancer.isOpen()) {
+                alert('please open camera');
+            } else if(enhancer.getVideoFit() === 'contain') {
+                enhancer.setVideoFit('cover');
+            } else {
+                enhancer.setVideoFit('contain');
+            }
+        })
+    
+        // get visible region
+        getVisibleRegion.addEventListener('click', () => {
+            if(enhancer.isOpen()) {
+                console.log(enhancer.getVisibleRegion(true));
+            } else {
+                console.log('please open camera');
+            }       
+        })
+    
+        // start fetch loop
+        switchFetchLoop.addEventListener('click', () => {
+            if(enhancer.isFetchingLoopStarted()) {
+                enhancer.stopFetchingLoop();
+                clearInterval(timer);
+                alert('stop fetching loop');
+            } else {
+                enhancer.startFetchingLoop();
+                enhancer.maxNumberOfFramesInBuffer = 3
+                timer = setInterval(() => {
+                    let cvs = enhancer.getFrameFromBuffer().canvas
+                    frame.innerHTML = '';
+                    frame.appendChild(cvs);
+                },1000)
+            }
+        })
+    </script>
+</body>
+</html>
