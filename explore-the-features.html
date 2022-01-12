@@ -449,9 +449,11 @@
                 enhancer.loopInterval = 500;
                 enhancer.maxNumberOfFramesInBuffer = 3
                 timer = setInterval(() => {
-                    let cvs = enhancer.getFrameFromBuffer().canvas
-                    frame.innerHTML = '';
-                    frame.appendChild(cvs);
+                    if(enhancer.getFrameFromBuffer() !== null) {
+                        let cvs = enhancer.getFrameFromBuffer().canvas
+                        frame.innerHTML = '';
+                        frame.appendChild(cvs);
+                    }
                 },1000)
             }
         })
