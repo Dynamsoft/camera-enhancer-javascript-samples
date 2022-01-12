@@ -217,7 +217,7 @@
             };
             // if close camera, should set the selection box to not selectable
             const callbackCameraClose = (callBackInfo) => {
-                console.log("camera closeed");
+                console.log("camera closed");
                 console.log(callBackInfo);
                 setLineWidth.disabled = "disabled";
                 setStrokeStyle.disabled = "disabled";
@@ -449,8 +449,9 @@
                 enhancer.loopInterval = 500;
                 enhancer.maxNumberOfFramesInBuffer = 3
                 timer = setInterval(() => {
-                    if(enhancer.getFrameFromBuffer() !== null) {
-                        let cvs = enhancer.getFrameFromBuffer().canvas
+                    const dceFrame = enhancer.getFrameFromBuffer();
+                    if(dceFrame !== null) {
+                        let cvs = dceFrame.canvas;
                         frame.innerHTML = '';
                         frame.appendChild(cvs);
                     }
