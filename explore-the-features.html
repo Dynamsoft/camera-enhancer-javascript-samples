@@ -122,9 +122,9 @@
             </select>
             <select name="StrokeStyle" id="StrokeStyle">
                 <option value="">setViewDecoratorStrokeStyle</option>
-                <option value="skyblue">skyblue</option>
-                <option value="red">red</option>
-                <option value="purple">purple</option>
+                <option value="rgba(135,206,235)">skyblue</option>
+                <option value="rgba(255,0,0)">red</option>
+                <option value="rgba(128,0,128)">purple</option>
             </select>
             <select name="FillStyle" id="FillStyle">
                 <option value="transparent">setViewDecoratorFillStyle</option>
@@ -159,9 +159,9 @@
                 </select>
                 <select id="setMaskStrokeStyle" style="flex: 1">
                     <option value="setMaskStrokeStyle">setMaskStrokeStyle</option>
-                    <option value="skyblue">skyblue</option>
-                    <option value="red">red</option>
-                    <option value="purple">purple</option>
+                    <option value="rgba(135,206,235)">skyblue</option>
+                    <option value="rgba(255,0,0)">red</option>
+                    <option value="rgba(128,0,128)">purple</option>
                 </select>
                 <select id="setMaskFillStyle" style="flex: 1">
                     <option value="rgba(0,0,0,0.6)">setMaskFillStyle</option>
@@ -174,9 +174,9 @@
         </div>
     </footer>
     <script>
-        let oc = document.querySelector('.open-camera');
-        let gf = document.querySelector('.get-frame');
-        let frame = document.querySelector('.show-frame');
+        let openCamera = document.querySelector('.open-camera');
+        let getFrame = document.querySelector('.get-frame');
+        let showFrame = document.querySelector('.show-frame');
         let decorator = document.querySelector('#decorator');
         let setLineWidth = document.querySelector('#LineWidth');
         let setStrokeStyle = document.querySelector('#StrokeStyle');
@@ -197,7 +197,7 @@
         let overlay;
         let timer;
         let ctx;
-        let l,r,t,b;
+        let leftRegion,rightRegion,topRegion,bottomRegion;
         
         // create a DCE instance and bind the callback
         let pReady = (async()=>{
@@ -278,7 +278,7 @@
         setStrokeStyle.addEventListener('change', ()=>{
             let DecoratorInfo = enhancer.getViewDecorator();
             if(setStrokeStyle.value === '') {
-                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgb(254,142,20)');
+                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgba(254,142,20)');
             } else {
                 enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],setStrokeStyle.value);
             }
@@ -312,7 +312,7 @@
         })
 
         // open camera
-        oc.addEventListener('click', async ()=>{
+        openCamera.addEventListener('click', async ()=>{
             await pReady;
             if(enhancer.isOpen()) { 
                 return;
@@ -351,7 +351,7 @@
                 if(inps[0].value === '0' && inps[2].value === '0' && inps[1].value === '100' && inps[3].value === '100') {
                     return
                 } else {
-                    if(l === inps[0].value && r === inps[1].value && t === inps[2].value && b === inps[3].value) {
+                    if(leftRegion === inps[0].value && rightRegion === inps[1].value && topRegion === inps[2].value && bottomRegion === inps[3].value) {
                         return
                     } else {
                         let regionInfo = enhancer.getVisibleRegion(false);
@@ -362,16 +362,14 @@
                         // Record the previous recognition area. 
                         // If the next recognition area remains unchanged, 
                         // you do not need to redraw the text
-                        l = inps[0].value;
-                        r = inps[1].value;
-                        t = inps[2].value;
-                        b = inps[3].value;
+                        leftRegion = inps[0].value;
+                        rightRegion = inps[1].value;
+                        topRegion = inps[2].value;
+                        bottomRegion = inps[3].value;
                     }
                 }
             } else {
-                alert(
-                    `scan region left need to be less than scan region right and scan region top need to be less than scan region bottom`
-                );
+                alert( `Invalid scanRegion.`);
             }
         })
 
@@ -388,7 +386,7 @@
         // set scan region stroke
         setMaskStrokeStyle.addEventListener('change', () => {
             if(setMaskStrokeStyle.value === 'setMaskStrokeStyle') {
-                enhancer.setScanRegionMaskStyle({strokeStyle: 'rgb(254,142,20)'});
+                enhancer.setScanRegionMaskStyle({strokeStyle: 'rgba(254,142,20)'});
             } else {
                 enhancer.setScanRegionMaskStyle({strokeStyle: setMaskStrokeStyle.value});
             }
@@ -400,14 +398,14 @@
         })
 
         // get frame
-        gf.addEventListener('click', async ()=>{
+        getFrame.addEventListener('click', async ()=>{
             await pReady;
             if(!enhancer.isOpen()) {
                 return;
             } else {
                 let frameData = enhancer.getFrame();
-                frame.innerHTML = '';
-                frame.appendChild(frameData.canvas);
+                showFrame.innerHTML = '';
+                showFrame.appendChild(frameData.canvas);
             }
         })
 
@@ -452,8 +450,8 @@
                     const dceFrame = enhancer.getFrameFromBuffer();
                     if(dceFrame !== null) {
                         let cvs = dceFrame.canvas;
-                        frame.innerHTML = '';
-                        frame.appendChild(cvs);
+                        showFrame.innerHTML = '';
+                        showFrame.appendChild(cvs);
                     }
                 },1000)
             }
