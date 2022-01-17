@@ -200,16 +200,7 @@
         
         // create a DCE instance and bind the callback
         let pReady = (async()=>{
-            // Dynamsoft.DCE.CameraEnhancer.engineResourcePath = "https://unpkg.com/cube-dynamsoft-camera-enhancer@0.20220104111256.0/dist/"
             enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance();
-/*             enhancer.setScanRegion({
-                regionLeft: 10,
-                regionTop: 10, 
-                regionRight: 90, 
-                regionBottom: 90, 
-                // if true use %, if false use px
-                regionMeasuredByPercentage: unitSelection.value === '%' ? true : false
-            }); */
             const callbackCameraOpen = (callBackInfo) => {
                 console.log("camera opened");
                 console.log(callBackInfo);
@@ -336,7 +327,7 @@
         // set scan region
         setScanRegion.addEventListener('click', ()=>{
             if(!enhancer.isOpen()) {
-                alert('please open camera!')
+                alert('Camera is not open.')
             } else if (inps[0].value < inps[1].value && inps[2].value < inps[3].value) {
                 // set scan region
                 enhancer.setScanRegion({
@@ -358,9 +349,7 @@
                         ctx = overlay.getContext('2d');
                         ctx.font="30px Arial";
                         ctx.fillText('You can draw anything there',10, 30);
-                        // Record the previous recognition area. 
-                        // If the next recognition area remains unchanged, 
-                        // you do not need to redraw the text
+                        // Record the previous scan region. If the next scan region remains unchanged, do not redraw the text.
                         regionLeft = inps[0].value;
                         regionRight = inps[1].value;
                         regionTop = inps[2].value;
@@ -440,12 +429,12 @@
                 clearInterval(timer);
                 alert('stop fetching loop');
             } else {
-                // Specify when to fetch the next frame (n mini-seconds from now). 
-                // If set to 0, the fetching begins right away.
                 enhancer.startFetchingLoop();
+                // Specify the interval to fetch a new frame.
                 enhancer.loopInterval = 500;
                 enhancer.maxNumberOfFramesInBuffer = 3
                 timer = setInterval(() => {
+                    // get frame and add it to DOM
                     const dceFrame = enhancer.getFrameFromBuffer();
                     if(dceFrame !== null) {
                         let cvs = dceFrame.canvas;
