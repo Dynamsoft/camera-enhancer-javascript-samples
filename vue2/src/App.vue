@@ -1,0 +1,33 @@
+<template>
+  <div id="app">
+    <Video />
+    <FooterControl />
+  </div>
+</template>
+
+<script>
+import Video from './components/Video'
+import FooterControl from './components/FooterControl'
+export default {
+  name: 'App',
+  components:{Video, FooterControl},
+
+}
+</script>
+
+<style lang="less">
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+button {
+  border: 0;
+}
+</style>
