@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import DCE from '../dce.js'
 export default {
     name: 'Video',
     mounted() {
@@ -10,7 +11,7 @@ export default {
     },
     methods: {
         async initSettings() {
-            window.enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance();
+            window.enhancer = await DCE.createInstance();
             const callbackCameraOpen = () => {
                 console.log("camera opened");
             };
