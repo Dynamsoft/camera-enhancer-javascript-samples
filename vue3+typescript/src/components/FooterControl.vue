@@ -105,8 +105,8 @@ export default {
         let decoratorChange = ():void => {
             // if decorator is crossline or crosshair, can not set FillStyle and MaskFillStyle
             if(decoratorValue.value === 'crossline' || decoratorValue.value === 'crosshair') {
-                store.state.fillStyleIsDisabled = true;
-                store.state.maskFillStyleIsDisabled = true;
+                store.state.fillStyleIsDisabled = false;
+                store.state.maskFillStyleIsDisabled = false;
             } else if(decoratorValue.value === 'rectangle' || decoratorValue.value === 'focus') {
                 store.state.lineWidthIsDisabled = false;
                 store.state.strokeStyleIsDisabled = false;
