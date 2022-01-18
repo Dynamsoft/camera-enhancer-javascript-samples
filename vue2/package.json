@@ -9,7 +9,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
-    "vuex": "^3.6.2"，
+    "vuex": "^3.6.2",
     "cube-dynamsoft-camera-enhancer": "0.20220104111256.0"
   },
   "devDependencies": {
