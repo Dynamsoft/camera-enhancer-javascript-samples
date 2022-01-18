@@ -4,14 +4,15 @@
 
 <script lang="ts">
 import { onMounted } from '@vue/runtime-core';
-import { useStore } from 'vuex'
+import { useStore } from 'vuex',
+import DCE from '../dce'
 export default {
     name: 'Video',
     setup() {
         const store = useStore()
         
         let initSettings = async () => {
-            (window as any).enhancer = await (window as any).Dynamsoft.DCE.CameraEnhancer.createInstance();
+            (window as any).enhancer = await DCE.createInstance();
             const callbackCameraOpen = ():void => {
                 console.log("camera opened");
             };
