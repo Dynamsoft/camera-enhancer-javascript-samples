@@ -75,13 +75,13 @@ export default {
     methods: {
         async openCamera() {
             await this.initSettings;
-            if(enhancer.isOpen()) { 
+            if(window.enhancer.isOpen()) { 
                 return;
             } else {
-                document.querySelector('#recognizerUI').appendChild(enhancer.getUIElement());
-                await enhancer.open(true);
+                document.querySelector('#recognizerUI').appendChild(window.enhancer.getUIElement());
+                await window.enhancer.open(true);
                 // A decorator must be set to select a style
-                if(enhancer.getViewDecorator().type.length !== 0) {
+                if(window.enhancer.getViewDecorator().type.length !== 0) {
                     this.$store.state.lineWidthIsDisabled = false
                     this.$store.state.strokeStyleIsDisabled = false
                     this.$store.state.fillStyleIsDisabled = false
@@ -93,10 +93,10 @@ export default {
         
         async getFrame() {
             await this.initSettings;
-            if(!enhancer.isOpen()) {
+            if(!window.enhancer.isOpen()) {
                 return;
             } else {
-                let frameData = enhancer.getFrame();
+                let frameData = window.enhancer.getFrame();
                 this.frameData = frameData
                 document.querySelector('.show-frame').innerHTML = '';
                 frameData.canvas.id = 'frame-canvas'
@@ -121,40 +121,40 @@ export default {
                 this.$store.state.fillStyleIsDisabled = true;
                 this.$store.state.maskFillStyleIsDisabled = true;
             }
-            enhancer.setViewDecorator(this.decoratorValue, this.area);
+            window.enhancer.setViewDecorator(this.decoratorValue, this.area);
         },
 
         lineWidthChange() {
-            let DecoratorInfo = enhancer.getViewDecorator();
+            let DecoratorInfo = window.enhancer.getViewDecorator();
             if(this.lineWidthValue === '') {
-                enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],5);
+                window.enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],5);
             } else {
-                enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],parseInt(this.lineWidthValue));
+                window.enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],parseInt(this.lineWidthValue));
             }
         },
 
         strokeStyleChange() {
-            let DecoratorInfo = enhancer.getViewDecorator();
+            let DecoratorInfo = window.enhancer.getViewDecorator();
             if(this.strokeStyleValue === '') {
-                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgb(254,142,20)');
+                window.enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgb(254,142,20)');
             } else {
-                enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],this.strokeStyleValue);
+                window.enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],this.strokeStyleValue);
             }
         },
 
         fillStyleChange() {
-            let DecoratorInfo = enhancer.getViewDecorator();
-            enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],this.fillStyleValue);
+            let DecoratorInfo = window.enhancer.getViewDecorator();
+            window.enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],this.fillStyleValue);
         },
 
         maskFillStyleChange() {
-            let DecoratorInfo = enhancer.getViewDecorator();
-            enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],this.maskFillStyleValue);
+            let DecoratorInfo = window.enhancer.getViewDecorator();
+            window.enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],this.maskFillStyleValue);
         },
 
         setScanRegion() {
             // set scan region
-            enhancer.setScanRegion({
+            window.enhancer.setScanRegion({
                 regionLeft: parseInt(this.scanRegionLeft) || 0,
                 regionTop: parseInt(this.scanRegionTop) || 0, 
                 regionRight: parseInt(this.scanRegionRight) || 100, 

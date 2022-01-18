@@ -4,8 +4,8 @@
 
 <script lang="ts">
 import { onMounted } from '@vue/runtime-core';
-import { useStore } from 'vuex',
-import DCE from '../dce'
+import { useStore } from 'vuex';
+import DCE from '../dce';
 export default {
     name: 'Video',
     setup() {

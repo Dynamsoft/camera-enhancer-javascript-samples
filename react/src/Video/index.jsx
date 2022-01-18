@@ -8,7 +8,7 @@ export default class index extends Component {
     }
 
     initSettings = async () => {
-        window.enhancer = await window.DCE.createInstance();
+        window.enhancer = await DCE.createInstance();
         const callbackCameraOpen = () => {
             console.log("camera opened");
         };

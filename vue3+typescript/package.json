@@ -7,9 +7,9 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "cube-dynamsoft-camera-enhancer": "0.20220118131820.0",
     "vue": "^3.0.0",
-    "vuex": "4.0.0",
-    "cube-dynamsoft-camera-enhancer": "0.20220104111256.0"
+    "vuex": "4.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-typescript": "~4.5.0",

@@ -30,10 +30,10 @@ export default {
             const callbackResolutionChange = () => {
                 console.log("camera resolution changed");
             };
-            enhancer.on("cameraOpen", callbackCameraOpen);
-            enhancer.on("cameraClose", callbackCameraClose);
-            enhancer.on("cameraChange", callbackCameraChange);
-            enhancer.on("resolutionChange", callbackResolutionChange);
+            window.enhancer.on("cameraOpen", callbackCameraOpen);
+            window.enhancer.on("cameraClose", callbackCameraClose);
+            window.enhancer.on("cameraChange", callbackCameraChange);
+            window.enhancer.on("resolutionChange", callbackResolutionChange);
         },
     },
 }
