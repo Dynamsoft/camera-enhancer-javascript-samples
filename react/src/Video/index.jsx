@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import DCE from '../dce'
 import './index.css'
 
 export default class index extends Component {
@@ -7,7 +8,7 @@ export default class index extends Component {
     }
 
     initSettings = async () => {
-        window.enhancer = await window.Dynamsoft.DCE.CameraEnhancer.createInstance();
+        window.enhancer = await window.DCE.createInstance();
         const callbackCameraOpen = () => {
             console.log("camera opened");
         };
