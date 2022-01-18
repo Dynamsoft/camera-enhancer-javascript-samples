@@ -60,8 +60,8 @@ export default class FooterControl extends Component {
         // if decorator is crossline or crosshair, can not set FillStyle and MaskFillStyle
         if(e.target.value === 'crossline' || e.target.value === 'crosshair') {
             this.setState({
-                fillStyleIsDisabled: true,
-                maskFillStyleIsDisabled: true
+                fillStyleIsDisabled: false,
+                maskFillStyleIsDisabled: false
             })
         } else if(e.target.value === 'rectangle' || e.target.value === 'focus') {
             this.setState({
