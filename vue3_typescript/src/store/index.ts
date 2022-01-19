@@ -11,6 +11,9 @@ export default createStore({
     }
   },
   mutations: {
+    setEnhancer(state: any, newValue: object) {
+      state.enhancer = newValue;
+    }
   },
   actions: {
   },
