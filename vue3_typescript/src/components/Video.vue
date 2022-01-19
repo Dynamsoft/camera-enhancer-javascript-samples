@@ -4,15 +4,16 @@
 
 <script lang="ts">
 import { onMounted } from '@vue/runtime-core';
-import { useStore } from 'vuex';
-import DCE from '../dce';
+import { useStore } from 'vuex'
+import DCE from '../dce'
 export default {
     name: 'Video',
     setup() {
         const store = useStore()
         
         let initSettings = async () => {
-            (window as any).enhancer = await DCE.createInstance();
+            let enhancer = await DCE.createInstance();
+            store.commit('setEnhancer', enhancer)
             const callbackCameraOpen = ():void => {
                 console.log("camera opened");
             };
@@ -31,10 +32,10 @@ export default {
             const callbackResolutionChange = ():void => {
                 console.log("camera resolution changed");
             };
-            (window as any).enhancer.on("cameraOpen", callbackCameraOpen);
-            (window as any).enhancer.on("cameraClose", callbackCameraClose);
-            (window as any).enhancer.on("cameraChange", callbackCameraChange);
-            (window as any).enhancer.on("resolutionChange", callbackResolutionChange); 
+            store.state.enhancer.on("cameraOpen", callbackCameraOpen);
+            store.state.enhancer.on("cameraClose", callbackCameraClose);
+            store.state.enhancer.on("cameraChange", callbackCameraChange);
+            store.state.enhancer.on("resolutionChange", callbackResolutionChange); 
         }
 
         onMounted(() => {
