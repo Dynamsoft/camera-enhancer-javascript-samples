@@ -3,15 +3,16 @@
 </template>
 
 <script>
-import DCE from '../dce.js'
+import DCE from '../dce'
 export default {
     name: 'Video',
     mounted() {
-        this.initSettings()
+        this.init()
     },
     methods: {
-        async initSettings() {
-            window.enhancer = await DCE.createInstance();
+        async init() {
+            let enhancer = await DCE.createInstance();
+            this.$store.commit('setEnhancer',enhancer);
             const callbackCameraOpen = () => {
                 console.log("camera opened");
             };
@@ -30,11 +31,11 @@ export default {
             const callbackResolutionChange = () => {
                 console.log("camera resolution changed");
             };
-            window.enhancer.on("cameraOpen", callbackCameraOpen);
-            window.enhancer.on("cameraClose", callbackCameraClose);
-            window.enhancer.on("cameraChange", callbackCameraChange);
-            window.enhancer.on("resolutionChange", callbackResolutionChange);
-        },
+            this.$store.state.enhancer.on("cameraOpen", callbackCameraOpen);
+            this.$store.state.enhancer.on("cameraClose", callbackCameraClose);
+            this.$store.state.enhancer.on("cameraChange", callbackCameraChange);
+            this.$store.state.enhancer.on("resolutionChange", callbackResolutionChange);
+        }
     },
 }
 </script>
