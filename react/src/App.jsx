@@ -11,6 +11,11 @@ export default class App extends Component {
             enhancer: this.createInstance()
         }
     }
+    
+    async componentWillUnmount() {
+        await this.state.enhancer;
+        this.state.enhancer.close();
+    }
 
     createInstance = async () => {
         let enhancer = await DCE.createInstance();
