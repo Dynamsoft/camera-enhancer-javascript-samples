@@ -11,16 +11,16 @@
                 <option value="crosshair">crosshair</option>
             </select>
             <select name="LineWidth" id="LineWidth" v-model="lineWidthValue" :disabled="this.$store.state.lineWidthIsDisabled" @change="lineWidthChange">
-                <option value="">setViewDecoratorLineWidth</option>
+                <option value="5">setViewDecoratorLineWidth</option>
                 <option value="10">10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>
             </select>
             <select name="StrokeStyle" id="StrokeStyle" v-model="strokeStyleValue" :disabled="this.$store.state.strokeStyleIsDisabled" @change="strokeStyleChange">
-                <option value="">setViewDecoratorStrokeStyle</option>
-                <option value="skyblue">skyblue</option>
-                <option value="red">red</option>
-                <option value="purple">purple</option>
+                <option value="rgba(254,142,20)">setViewDecoratorStrokeStyle</option>
+                <option value="rgba(135, 206, 235)">skyblue</option>
+                <option value="rgba(255, 0, 0)">red</option>
+                <option value="rgba(128, 0, 128)">purple</option>
             </select>
             <select name="FillStyle" id="FillStyle" v-model="fillStyleValue" :disabled="this.$store.state.fillStyleIsDisabled" @change="fillStyleChange">
                 <option value="transparent">setViewDecoratorFillStyle</option>
@@ -61,8 +61,8 @@ export default {
     setup() {
         let area = reactive({x: 10, y:10, width:80, height:80});
         let decoratorValue = ref('decorator');
-        let lineWidthValue = ref('');
-        let strokeStyleValue = ref('');
+        let lineWidthValue = ref('5');
+        let strokeStyleValue = ref('rgba(254,142,20)');
         let fillStyleValue = ref('transparent');
         let maskFillStyleValue = ref('transparent');
         let scanRegionLeft = ref('');
@@ -73,15 +73,15 @@ export default {
         const store = useStore()
         
         let openCamera = async () => {  
-            if((window as any).enhancer.isOpen()) { 
+            if(store.state.enhancer.isOpen()) { 
                 return;
             } else {
                 let rec = document.querySelector('#recognizerUI') as any
-                rec.appendChild((window as any).enhancer.getUIElement());
+                rec.appendChild(store.state.enhancer.getUIElement());
                 
-                await (window as any).enhancer.open(true);
+                await store.state.enhancer.open(true);
                 // A decorator must be set to select a style
-                if((window as any).enhancer.getViewDecorator().type.length !== 0) {
+                if(store.state.enhancer.getViewDecorator().type.length !== 0) {
                     store.state.lineWidthIsDisabled = false;
                     store.state.strokeStyleIsDisabled = false;
                     store.state.fillStyleIsDisabled = false;
@@ -92,10 +92,10 @@ export default {
         }
 
         let getFrame = async () => {
-            if(!(window as any).enhancer.isOpen()) {
+            if(!store.state.enhancer.isOpen()) {
                 return;
             } else {
-                let frameData = (window as any).enhancer.getFrame();
+                let frameData = store.state.enhancer.getFrame();
                 (document.querySelector('.show-frame') as any).innerHTML = '';
                 frameData.canvas.style.height = '100%';
                 (document.querySelector('.show-frame') as any).appendChild(frameData.canvas);
@@ -105,8 +105,10 @@ export default {
         let decoratorChange = ():void => {
             // if decorator is crossline or crosshair, can not set FillStyle and MaskFillStyle
             if(decoratorValue.value === 'crossline' || decoratorValue.value === 'crosshair') {
-                store.state.fillStyleIsDisabled = false;
-                store.state.maskFillStyleIsDisabled = false;
+                store.state.lineWidthIsDisabled = false;
+                store.state.strokeStyleIsDisabled = false;
+                store.state.fillStyleIsDisabled = true;
+                store.state.maskFillStyleIsDisabled = true;
             } else if(decoratorValue.value === 'rectangle' || decoratorValue.value === 'focus') {
                 store.state.lineWidthIsDisabled = false;
                 store.state.strokeStyleIsDisabled = false;
@@ -118,40 +120,32 @@ export default {
                 store.state.fillStyleIsDisabled = true;
                 store.state.maskFillStyleIsDisabled = true;
             }
-            (window as any).enhancer.setViewDecorator(decoratorValue.value, area);
+            store.state.enhancer.setViewDecorator(decoratorValue.value, area);
         }
 
         let lineWidthChange = ():void => {
-            let DecoratorInfo = (window as any).enhancer.getViewDecorator();
-            if(lineWidthValue.value === '') {
-                (window as any).enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],5);
-            } else {
-                (window as any).enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],parseInt(lineWidthValue.value));
-            }
+            let DecoratorInfo = store.state.enhancer.getViewDecorator();
+            store.state.enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],parseInt(lineWidthValue.value));
         }
 
         let strokeStyleChange = ():void => {
-            let DecoratorInfo = (window as any).enhancer.getViewDecorator();
-            if(strokeStyleValue.value === '') {
-                (window as any).enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgb(254,142,20)');
-            } else {
-                (window as any).enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],strokeStyleValue.value);
-            }
+            let DecoratorInfo = store.state.enhancer.getViewDecorator();
+            store.state.enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],strokeStyleValue.value);
         }
 
         let fillStyleChange = ():void => {
-            let DecoratorInfo = (window as any).enhancer.getViewDecorator();
-            (window as any).enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],fillStyleValue.value);
+            let DecoratorInfo = store.state.enhancer.getViewDecorator();
+            store.state.enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],fillStyleValue.value);
         }
 
         let maskFillStyleChange = ():void => {
-            let DecoratorInfo = (window as any).enhancer.getViewDecorator();
-            (window as any).enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],maskFillStyleValue.value);
+            let DecoratorInfo = store.state.enhancer.getViewDecorator();
+            store.state.enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],maskFillStyleValue.value);
         }
 
         let setScanRegion = ():void => {
             // set scan region
-            (window as any).enhancer.setScanRegion({
+            store.state.enhancer.setScanRegion({
                 regionLeft: parseInt(scanRegionLeft.value) || 0,
                 regionTop: parseInt(scanRegionTop.value) || 0, 
                 regionRight: parseInt(scanRegionRight.value) || 100, 
