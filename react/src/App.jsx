@@ -13,11 +13,11 @@ export default class App extends Component {
     }
 
     createInstance = async () => {
-        let anhancer = await DCE.createInstance();
-        return anhancer;
+        let enhancer = await DCE.createInstance();
+        return enhancer;
     }
 
-    setAppState = (fn) => {this.setState({setSelectDisabled: fn})}
+    setAppState = (changeDisabled) => {this.setState({setSelectDisabled: changeDisabled})}
 
     render() {
         return (
