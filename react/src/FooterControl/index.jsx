@@ -3,6 +3,7 @@ import './index.css'
 
 export default class FooterControl extends Component {
     state = {
+        enhancer: {},
         area: {x: 10, y:10, width:80, height:80},
         frameData: [],
         decoratorValue: 'decorator',
@@ -15,41 +16,44 @@ export default class FooterControl extends Component {
         scanRegionTop: '',
         scanRegionBottom: '',
         unitSelection: '%',
-        decoratorIsDisabled: true,
-        lineWidthIsDisabled: true,
-        strokeStyleIsDisabled: true,
-        fillStyleIsDisabled: true,
-        maskFillStyleIsDisabled: true,
+        isDecoratorDisabled: true,
+        isLineWidthDisabled: true,
+        isStrokeStyleDisabled: true,
+        isFillStyleDisabled: true,
+        isMaskFillStyleDisabled: true,
     }
 
     componentDidMount() {
-        this.props.cd(this.changeDisabled)
+        this.props.setAppState(this.changeDisabled)
+        this.props.enhancer.then(r => {
+            this.setState({enhancer: r})
+        })
     }
 
     openCamera = async () => {
-        if(window.enhancer.isOpen()) { 
+        if(this.state.enhancer.isOpen()) { 
             return;
         } else {
-            document.querySelector('#recognizerUI').appendChild(window.enhancer.getUIElement());
-            await window.enhancer.open(true);
+            document.querySelector('#recognizerUI').appendChild(this.state.enhancer.getUIElement());
+            await this.state.enhancer.open(true);
             // A decorator must be set to select a style
-            if(window.enhancer.getViewDecorator().type.length !== 0) {
+            if(this.state.enhancer.getViewDecorator().type.length !== 0) {
                 this.setState({
-                    lineWidthIsDisabled: false,
-                    strokeStyleIsDisabled: false,
-                    fillStyleIsDisabled: false,
-                    maskFillStyleIsDisabled: false,
+                    isLineWidthDisabled: false,
+                    isStrokeStyleDisabled: false,
+                    isFillStyleDisabled: false,
+                    isMaskFillStyleDisabled: false,
                 })
             }
-            this.setState({decoratorIsDisabled: false})
+            this.setState({isDecoratorDisabled: false})
         }
     }
 
     getFrame = async () => {
-        if(!window.enhancer.isOpen()) {
+        if(!this.state.enhancer.isOpen()) {
             return;
         } else {
-            let frameData = window.enhancer.getFrame();
+            let frameData = this.state.enhancer.getFrame();
             document.querySelector('.show-frame').innerHTML = '';
             frameData.canvas.style.height = '100%'
             document.querySelector('.show-frame').appendChild(frameData.canvas);
@@ -60,59 +64,53 @@ export default class FooterControl extends Component {
         // if decorator is crossline or crosshair, can not set FillStyle and MaskFillStyle
         if(e.target.value === 'crossline' || e.target.value === 'crosshair') {
             this.setState({
-                fillStyleIsDisabled: false,
-                maskFillStyleIsDisabled: false
+                isLineWidthDisabled: false,
+                isStrokeStyleDisabled: false,
+                isFillStyleDisabled: true,
+                isMaskFillStyleDisabled: true
             })
         } else if(e.target.value === 'rectangle' || e.target.value === 'focus') {
             this.setState({
-                lineWidthIsDisabled: false,
-                strokeStyleIsDisabled: false,
-                fillStyleIsDisabled: false,
-                maskFillStyleIsDisabled: false
+                isLineWidthDisabled: false,
+                isStrokeStyleDisabled: false,
+                isFillStyleDisabled: false,
+                isMaskFillStyleDisabled: false
             })
         } else if(e.target.value === 'decorator') {
             this.setState({
-                lineWidthIsDisabled: true,
-                strokeStyleIsDisabled: true,
-                fillStyleIsDisabled: true,
-                maskFillStyleIsDisabled: true
+                isLineWidthDisabled: true,
+                isStrokeStyleDisabled: true,
+                isFillStyleDisabled: true,
+                isMaskFillStyleDisabled: true
             })
         }
-        window.enhancer.setViewDecorator(e.target.value, this.state.area);
+        this.state.enhancer.setViewDecorator(e.target.value, this.state.area);
     }
 
     lineWidthChange = (e) => {
-        let DecoratorInfo = window.enhancer.getViewDecorator();
-        if(e.target.value === '') {
-            window.enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],5);
-        } else {
-            window.enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],parseInt(e.target.value));
-        }
+        let DecoratorInfo = this.state.enhancer.getViewDecorator();
+        this.state.enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],parseInt(e.target.value));
     }
 
-    strokeStyleChange(e) {
-        let DecoratorInfo = window.enhancer.getViewDecorator();
-        if(e.target.value === '') {
-            window.enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgb(254,142,20)');
-        } else {
-            window.enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],e.target.value);
-        }
+    strokeStyleChange = (e) => {
+        let DecoratorInfo = this.state.enhancer.getViewDecorator();
+        this.state.enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],e.target.value);
     }
 
-    fillStyleChange(e) {
-        let DecoratorInfo = window.enhancer.getViewDecorator();
-        window.enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],e.target.value);
+    fillStyleChange = (e) => {
+        let DecoratorInfo = this.state.enhancer.getViewDecorator();
+        this.state.enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],e.target.value);
     }
 
-    maskFillStyleChange(e) {
-        let DecoratorInfo = window.enhancer.getViewDecorator();
-        window.enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],e.target.value);
+    maskFillStyleChange = (e) => {
+        let DecoratorInfo = this.state.enhancer.getViewDecorator();
+        this.state.enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],e.target.value);
     }
 
     setScanRegion = () => {
         const {scanRegionLeft, scanRegionTop, scanRegionRight, scanRegionBottom, unitSelection} = this.state
         // set scan region
-        window.enhancer.setScanRegion({
+        this.state.enhancer.setScanRegion({
             regionLeft: parseInt(scanRegionLeft) || 0,
             regionTop: parseInt(scanRegionTop) || 0, 
             regionRight: parseInt(scanRegionRight) || 100, 
@@ -124,11 +122,11 @@ export default class FooterControl extends Component {
 
     changeDisabled = () => {
         this.setState({
-            decoratorIsDisabled: true,
-            lineWidthIsDisabled: true,
-            strokeStyleIsDisabled: true,
-            fillStyleIsDisabled: true,
-            maskFillStyleIsDisabled: true,
+            isDecoratorDisabled: true,
+            isLineWidthDisabled: true,
+            isStrokeStyleDisabled: true,
+            isFillStyleDisabled: true,
+            isMaskFillStyleDisabled: true,
         })
     }
     render() {
@@ -137,32 +135,32 @@ export default class FooterControl extends Component {
                 <div className="btn-group">
                     <button className="open-camera" onClick={this.openCamera}>open camera</button>
                     <button className="get-frame" onClick={this.getFrame}>get frame</button>
-                    <select name="decorator" id="decorator" onChange={this.decoratorChange} disabled={this.state.decoratorIsDisabled}>
+                    <select name="decorator" id="decorator" onChange={this.decoratorChange} disabled={this.state.isDecoratorDisabled}>
                         <option value="decorator">setViewDecorator</option>
                         <option value="rectangle">rectangle</option>
                         <option value="focus">focus</option>
                         <option value="crossline">crossline</option>
                         <option value="crosshair">crosshair</option>
                     </select>
-                    <select name="LineWidth" id="LineWidth" onChange={this.lineWidthChange} disabled={this.state.lineWidthIsDisabled}>
-                        <option value="">setViewDecoratorLineWidth</option>
+                    <select name="LineWidth" id="LineWidth" onChange={this.lineWidthChange} disabled={this.state.isLineWidthDisabled}>
+                        <option value="5">setViewDecoratorLineWidth</option>
                         <option value="10">10</option>
                         <option value="15">15</option>
                         <option value="20">20</option>
                     </select>
-                    <select name="StrokeStyle" id="StrokeStyle" onChange={this.strokeStyleChange} disabled={this.state.strokeStyleIsDisabled}>
-                        <option value="">setViewDecoratorStrokeStyle</option>
-                        <option value="skyblue">skyblue</option>
-                        <option value="red">red</option>
-                        <option value="purple">purple</option>
+                    <select name="StrokeStyle" id="StrokeStyle" onChange={this.strokeStyleChange} disabled={this.state.isStrokeStyleDisabled}>
+                        <option value="rgba(254,142,20)">setViewDecoratorStrokeStyle</option>
+                        <option value="rgba(135, 206, 235)">skyblue</option>
+                        <option value="rgba(255, 0, 0)">red</option>
+                        <option value="rgba(128, 0, 128)">purple</option>
                     </select>
-                    <select name="FillStyle" id="FillStyle" onChange={this.fillStyleChange} disabled={this.state.fillStyleIsDisabled}>
+                    <select name="FillStyle" id="FillStyle" onChange={this.fillStyleChange} disabled={this.state.isFillStyleDisabled}>
                         <option value="transparent">setViewDecoratorFillStyle</option>
                         <option value="rgba(135, 206, 235, 0.3)">skyblue</option>
                         <option value="rgba(255, 0, 0, 0.3)">red</option>
                         <option value="rgba(128, 0, 128, 0.3)">purple</option>
                     </select>
-                    <select name="MaskFillStyle" id="MaskFillStyle" onChange={this.maskFillStyleChange} disabled={this.state.maskFillStyleIsDisabled}>
+                    <select name="MaskFillStyle" id="MaskFillStyle" onChange={this.maskFillStyleChange} disabled={this.state.isMaskFillStyleDisabled}>
                         <option value="transparent">setViewDecoratorMaskFillStyle</option>
                         <option value="rgba(135, 206, 235, 0.3)">skyblue</option>
                         <option value="rgba(255, 0, 0, 0.3)">red</option>
