@@ -11,16 +11,16 @@
                 <option value="crosshair">crosshair</option>
             </select>
             <select name="LineWidth" id="LineWidth" v-model="lineWidthValue" :disabled="this.$store.state.lineWidthIsDisabled" @change="lineWidthChange">
-                <option value="">setViewDecoratorLineWidth</option>
+                <option value="5">setViewDecoratorLineWidth</option>
                 <option value="10">10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>
             </select>
             <select name="StrokeStyle" id="StrokeStyle" v-model="strokeStyleValue" :disabled="this.$store.state.strokeStyleIsDisabled" @change="strokeStyleChange">
-                <option value="">setViewDecoratorStrokeStyle</option>
-                <option value="skyblue">skyblue</option>
-                <option value="red">red</option>
-                <option value="purple">purple</option>
+                <option value="rgba(254,142,20)">setViewDecoratorStrokeStyle</option>
+                <option value="rgba(135, 206, 235)">skyblue</option>
+                <option value="rgba(255, 0, 0)">red</option>
+                <option value="rgba(128, 0, 128)">purple</option>
             </select>
             <select name="FillStyle" id="FillStyle" v-model="fillStyleValue" :disabled="this.$store.state.fillStyleIsDisabled" @change="fillStyleChange">
                 <option value="transparent">setViewDecoratorFillStyle</option>
@@ -60,8 +60,8 @@ export default {
             area: {x: 10, y:10, width:80, height:80},
             frameData: [],
             decoratorValue: 'decorator',
-            lineWidthValue: '',
-            strokeStyleValue: '',
+            lineWidthValue: '5',
+            strokeStyleValue: 'rgba(254,142,20)',
             fillStyleValue: 'transparent',
             maskFillStyleValue: 'transparent',
             scanRegionLeft: '',
@@ -75,13 +75,13 @@ export default {
     methods: {
         async openCamera() {
             await this.initSettings;
-            if(window.enhancer.isOpen()) { 
+            if(this.$store.state.enhancer.isOpen()) { 
                 return;
             } else {
-                document.querySelector('#recognizerUI').appendChild(window.enhancer.getUIElement());
-                await window.enhancer.open(true);
+                document.querySelector('#recognizerUI').appendChild(this.$store.state.enhancer.getUIElement());
+                await this.$store.state.enhancer.open(true);
                 // A decorator must be set to select a style
-                if(window.enhancer.getViewDecorator().type.length !== 0) {
+                if(this.$store.state.enhancer.getViewDecorator().type.length !== 0) {
                     this.$store.state.lineWidthIsDisabled = false
                     this.$store.state.strokeStyleIsDisabled = false
                     this.$store.state.fillStyleIsDisabled = false
@@ -93,10 +93,10 @@ export default {
         
         async getFrame() {
             await this.initSettings;
-            if(!window.enhancer.isOpen()) {
+            if(!this.$store.state.enhancer.isOpen()) {
                 return;
             } else {
-                let frameData = window.enhancer.getFrame();
+                let frameData = this.$store.state.enhancer.getFrame();
                 this.frameData = frameData
                 document.querySelector('.show-frame').innerHTML = '';
                 frameData.canvas.id = 'frame-canvas'
@@ -108,8 +108,10 @@ export default {
         decoratorChange() {
             // if decorator is crossline or crosshair, can not set FillStyle and MaskFillStyle
             if(this.decoratorValue === 'crossline' || this.decoratorValue === 'crosshair') {
-                this.$store.state.fillStyleIsDisabled = false;
-                this.$store.state.maskFillStyleIsDisabled = false;
+                this.$store.state.lineWidthIsDisabled = false;
+                this.$store.state.strokeStyleIsDisabled = false;
+                this.$store.state.fillStyleIsDisabled = true;
+                this.$store.state.maskFillStyleIsDisabled = true;
             } else if(this.decoratorValue === 'rectangle' || this.decoratorValue === 'focus') {
                 this.$store.state.lineWidthIsDisabled = false;
                 this.$store.state.strokeStyleIsDisabled = false;
@@ -121,40 +123,32 @@ export default {
                 this.$store.state.fillStyleIsDisabled = true;
                 this.$store.state.maskFillStyleIsDisabled = true;
             }
-            window.enhancer.setViewDecorator(this.decoratorValue, this.area);
+            this.$store.state.enhancer.setViewDecorator(this.decoratorValue, this.area);
         },
 
         lineWidthChange() {
-            let DecoratorInfo = window.enhancer.getViewDecorator();
-            if(this.lineWidthValue === '') {
-                window.enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],5);
-            } else {
-                window.enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],parseInt(this.lineWidthValue));
-            }
+            let DecoratorInfo = this.$store.state.enhancer.getViewDecorator();
+            this.$store.state.enhancer.setViewDecoratorLineWidth(DecoratorInfo.type[0],parseInt(this.lineWidthValue));
         },
 
         strokeStyleChange() {
-            let DecoratorInfo = window.enhancer.getViewDecorator();
-            if(this.strokeStyleValue === '') {
-                window.enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],'rgb(254,142,20)');
-            } else {
-                window.enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],this.strokeStyleValue);
-            }
+            let DecoratorInfo = this.$store.state.enhancer.getViewDecorator();
+            this.$store.state.enhancer.setViewDecoratorStrokeStyle(DecoratorInfo.type[0],this.strokeStyleValue);
         },
 
         fillStyleChange() {
-            let DecoratorInfo = window.enhancer.getViewDecorator();
-            window.enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],this.fillStyleValue);
+            let DecoratorInfo = this.$store.state.enhancer.getViewDecorator();
+            this.$store.state.enhancer.setViewDecoratorFillStyle(DecoratorInfo.type[0],this.fillStyleValue);
         },
 
         maskFillStyleChange() {
-            let DecoratorInfo = window.enhancer.getViewDecorator();
-            window.enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],this.maskFillStyleValue);
+            let DecoratorInfo = this.$store.state.enhancer.getViewDecorator();
+            this.$store.state.enhancer.setViewDecoratorMaskFillStyle(DecoratorInfo.type[0],this.maskFillStyleValue);
         },
 
         setScanRegion() {
             // set scan region
-            window.enhancer.setScanRegion({
+            this.$store.state.enhancer.setScanRegion({
                 regionLeft: parseInt(this.scanRegionLeft) || 0,
                 regionTop: parseInt(this.scanRegionTop) || 0, 
                 regionRight: parseInt(this.scanRegionRight) || 100, 
