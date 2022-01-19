@@ -37,6 +37,10 @@ export default {
             this.$store.state.enhancer.on("resolutionChange", callbackResolutionChange);
         }
     },
+    async beforeDestroy() {
+        await this.pEenhancer;
+        this.$store.state.enhancer.close()
+    }
 }
 </script>
 
