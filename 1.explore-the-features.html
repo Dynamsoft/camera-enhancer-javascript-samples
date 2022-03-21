@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/dynamsoft-camera-enhancer@2.1.0/dist/dce.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dynamsoft-camera-enhancer@2.3.1/dist/dce.js"></script>
     <title>explore-the-features</title>
     <style>
         * {
@@ -21,7 +21,7 @@
             border: 0;
         }
 
-        #recognizerUI {
+        #ui-container {
             position: absolute;
             top: 0;
             bottom: 40%;
@@ -96,7 +96,7 @@
     </style>
 </head>
 <body>
-    <div id="recognizerUI"></div>
+    <div id="ui-container"></div>
     <footer>
         <div class="btn-group">
             <button class="open-camera">open camera</button>
@@ -194,7 +194,6 @@
         let enhancer;
         let area;
         let overlay;
-        let timer;
         let ctx;
         let regionLeft,regionRight,regionTop,regionBottom;
         
@@ -235,12 +234,23 @@
                 console.log('single frame acquired');
                 console.log(callBackInfo);
             };
+            const callbackFrameAddedToBuffer = () => {
+                console.log('frame added to buffer');
+                // get frame and add it to DOM
+                const dceFrame = enhancer.getFrameFromBuffer();
+                if(dceFrame) {
+                    let cvs = dceFrame.toCanvas();
+                    showFrame.innerHTML = '';
+                    showFrame.appendChild(cvs);
+                }
+            };
             enhancer.on("cameraOpen", callbackCameraOpen);
             enhancer.on("cameraClose", callbackCameraClose);
             enhancer.on("cameraChange", callbackCameraChange);
             enhancer.on("resolutionChange", callbackResolutionChange);
             enhancer.on("played", callbackPlayed);
             enhancer.on("singleFrameAcquired",callbackSingleFrameAcquired);
+            enhancer.on("frameAddedToBuffer",callbackFrameAddedToBuffer);
             if(!enhancer.isOpen()) {
                 setLineWidth.disabled = "disabled";
                 setStrokeStyle.disabled = "disabled";
@@ -308,7 +318,7 @@
                 return;
             } else {
                 area = {x: 10, y:10, width:80, height:80};
-                document.querySelector('#recognizerUI').appendChild(enhancer.getUIElement());
+                document.querySelector('#ui-container').appendChild(enhancer.getUIElement());
                 await enhancer.open(true);
                 if(enhancer.getViewDecorator().type.length !== 0) {
                     setLineWidth.disabled = "";
@@ -391,9 +401,12 @@
             if(!enhancer.isOpen()) {
                 return;
             } else {
-                let frameData = enhancer.getFrame();
-                showFrame.innerHTML = '';
-                showFrame.appendChild(frameData.canvas);
+                let dceFrame = enhancer.getFrame();
+                if(dceFrame) {
+                    let cvs = dceFrame.toCanvas();
+                    showFrame.innerHTML = '';
+                    showFrame.appendChild(cvs);
+                }
             }
         })
 
@@ -426,22 +439,11 @@
         switchFetchLoop.addEventListener('click', () => {
             if(enhancer.isFetchingLoopStarted()) {
                 enhancer.stopFetchingLoop();
-                clearInterval(timer);
                 alert('stop fetching loop');
             } else {
-                enhancer.startFetchingLoop();
                 // Specify the interval to fetch a new frame.
                 enhancer.loopInterval = 500;
-                enhancer.maxNumberOfFramesInBuffer = 3
-                timer = setInterval(() => {
-                    // get frame and add it to DOM
-                    const dceFrame = enhancer.getFrameFromBuffer();
-                    if(dceFrame !== null) {
-                        let cvs = dceFrame.canvas;
-                        showFrame.innerHTML = '';
-                        showFrame.appendChild(cvs);
-                    }
-                },1000)
+                enhancer.startFetchingLoop();
             }
         })
     </script>
