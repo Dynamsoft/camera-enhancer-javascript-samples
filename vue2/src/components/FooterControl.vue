@@ -97,11 +97,14 @@ export default {
                 return;
             } else {
                 let frameData = this.$store.state.enhancer.getFrame();
-                this.frameData = frameData
-                document.querySelector('.show-frame').innerHTML = '';
-                frameData.canvas.id = 'frame-canvas'
-                frameData.canvas.style.height = '100%'
-                document.querySelector('.show-frame').appendChild(frameData.canvas);
+                if(frameData) {
+                    this.frameData = frameData
+                    let cvs = frameData.toCanvas();
+                    document.querySelector('.show-frame').innerHTML = '';
+                    cvs.id = 'frame-canvas'
+                    cvs.style.height = '100%'
+                    document.querySelector('.show-frame').appendChild(cvs);
+                }
             }
         },
 

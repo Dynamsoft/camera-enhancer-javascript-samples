@@ -41,11 +41,6 @@ export default {
         onMounted(() => {
             initSettings()
         })
-        
-        onUnmounted(async() => {
-            await pEnhancer;
-            store.state.enhancer.close();
-        })
     },
 }
 </script>

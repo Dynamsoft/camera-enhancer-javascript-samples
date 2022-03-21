@@ -96,9 +96,12 @@ export default {
                 return;
             } else {
                 let frameData = store.state.enhancer.getFrame();
-                (document.querySelector('.show-frame') as any).innerHTML = '';
-                frameData.canvas.style.height = '100%';
-                (document.querySelector('.show-frame') as any).appendChild(frameData.canvas);
+                if(frameData) {
+                    let cvs = frameData.toCanvas();
+                    (document.querySelector('.show-frame') as any).innerHTML = '';
+                    cvs.style.height = '100%';
+                    (document.querySelector('.show-frame') as any).appendChild(cvs);
+                }
             }
         }
 

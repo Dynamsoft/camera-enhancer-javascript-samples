@@ -18,6 +18,7 @@
     "@angular/platform-browser": "~13.1.0",
     "@angular/platform-browser-dynamic": "~13.1.0",
     "@angular/router": "~13.1.0",
+    "cube-dynamsoft-camera-enhancer": "0.20220318174512.0",
     "dynamsoft-camera-enhancer": "2.1.0",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",

@@ -54,9 +54,12 @@ export default class FooterControl extends Component {
             return;
         } else {
             let frameData = this.state.enhancer.getFrame();
-            document.querySelector('.show-frame').innerHTML = '';
-            frameData.canvas.style.height = '100%'
-            document.querySelector('.show-frame').appendChild(frameData.canvas);
+            if(frameData) {
+                let cvs = frameData.toCanvas();
+                document.querySelector('.show-frame').innerHTML = '';
+                cvs.style.height = '100%'
+                document.querySelector('.show-frame').appendChild(cvs);
+            }
         }
     }
 
