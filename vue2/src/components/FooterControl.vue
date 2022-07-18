@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import {DrawingItem} from 'cube-dynamsoft-camera-enhancer';
 export default {
     name: 'FooterControl',
     data() {
@@ -75,11 +76,18 @@ export default {
     methods: {
         async openCamera() {
             await this.initSettings;
+            console.log(this.$store.state);
             if(this.$store.state.enhancer.isOpen()) { 
                 return;
             } else {
                 document.querySelector('#recognizerUI').appendChild(this.$store.state.enhancer.getUIElement());
                 await this.$store.state.enhancer.open(true);
+
+                const drawingLayer = this.$store.state.enhancer.createDrawingLayer();
+                drawingLayer.setMode("editor");
+                const rect = new DrawingItem.DT_Rect(0, 0, 100, 100);
+                drawingLayer.addDrawingItem(rect);
+
                 // A decorator must be set to select a style
                 if(this.$store.state.enhancer.getViewDecorator().type.length !== 0) {
                     this.$store.state.lineWidthIsDisabled = false

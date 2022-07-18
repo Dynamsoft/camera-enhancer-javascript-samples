@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>camera-sample</title>
-    <script src="https://unpkg.com/dynamsoft-camera-enhancer@2.0.3/dist/dce.js"></script>
+    <script src="https://unpkg.com/cube-dynamsoft-camera-enhancer@0.20220718101421.0/dist/dce.js"></script>
     <style>
         * {
             padding: 0;
@@ -109,11 +109,12 @@
         let picGroup = document.querySelector('.picGroup')
 
         let pReady
-        let cameraEnhancer
+        let enhancer
 
         pReady = (async()=>{
-            Dynamsoft.DCE.CameraEnhancer.engineResourcePath = "https://unpkg.com/dynamsoft-camera-enhancer@2.0.3/dist/";
-            let enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance();
+            Dynamsoft.DCE.CameraEnhancer.engineResourcePath = "https://unpkg.com/cube-dynamsoft-camera-enhancer@0.20220718101421.0/dist/";
+            enhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance();
+            await enhancer.setUIElement(Dynamsoft.DCE.CameraEnhancer.defaultUIElementURL);
             document.getElementById('recognizerUI').appendChild(enhancer.getUIElement());
         })();
         openCamera.addEventListener('click', async ()=>{
@@ -124,7 +125,7 @@
                 enhancer.open()
             }
         })
-        capture.addEventListener('click', ()=>{
+        capture.addEventListener('click', async ()=>{
             await pReady;
             if(!enhancer.isOpen()) return
             let canvas = document.querySelectorAll('canvas')

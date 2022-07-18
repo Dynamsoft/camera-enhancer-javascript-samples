@@ -8,8 +8,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "cube-dynamsoft-camera-enhancer": "0.20220318174512.0",
-    "dynamsoft-camera-enhancer": "2.1.0",
+    "cube-dynamsoft-camera-enhancer": "0.20220718101421.0",
     "vue": "^2.6.11",
     "vuex": "^3.6.2"
   },

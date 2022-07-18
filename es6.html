@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="description" content="Quickly read barcodes with Dynamsoft Barcode Reader from a live camera stream.">
+    <meta name="keywords" content="camera based barcode reading">
+    <title>Dynamsoft Barcode Reader Sample - Hello World (Decoding via Camera)</title>
+</head>
+
+<body>
+    <h1 style="font-size: 1.5em;">Hello World for ES6</h1>
+    Loading...
+    <script type="module">
+        import { CameraEnhancer, DrawingItem } from 'https://cdn.jsdelivr.net/npm/cube-dynamsoft-camera-enhancer@0.20220718101421.0/dist/dce.mjs';
+
+        CameraEnhancer.engineResourcePath = "https://cdn.jsdelivr.net/npm/cube-dynamsoft-camera-enhancer@0.20220718101421.0/dist/";
+
+        (async () => {
+          const enhancer = await CameraEnhancer.createInstance();
+          await enhancer.open(true);
+          const drawingLayer = enhancer.createDrawingLayer();
+          console.log(drawingLayer);
+          drawingLayer.setMode("editor");
+          const rect = new DrawingItem.DT_Rect(0, 0, 100, 100);
+          drawingLayer.addDrawingItem(rect);
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import { DrawingItem } from 'cube-dynamsoft-camera-enhancer';
 import './index.css'
 
 export default class FooterControl extends Component {
@@ -36,6 +37,10 @@ export default class FooterControl extends Component {
         } else {
             document.querySelector('#recognizerUI').appendChild(this.state.enhancer.getUIElement());
             await this.state.enhancer.open(true);
+            const drawingLayer = this.state.enhancer.createDrawingLayer();
+            drawingLayer.setMode("editor");
+            const rect = new DrawingItem.DT_Rect(0, 0, 100, 100);
+            drawingLayer.addDrawingItem(rect);
             // A decorator must be set to select a style
             if(this.state.enhancer.getViewDecorator().type.length !== 0) {
                 this.setState({

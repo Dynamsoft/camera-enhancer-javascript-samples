@@ -13,6 +13,7 @@ export default {
         
         let initSettings = async () => {
             let enhancer = await DCE.createInstance();
+            await enhancer.setUIElement(DCE.defaultUIElementURL);
             store.commit('setEnhancer', enhancer)
             const callbackCameraOpen = ():void => {
                 console.log("camera opened");

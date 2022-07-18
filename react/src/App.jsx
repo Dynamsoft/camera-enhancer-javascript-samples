@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import DCE from './dce'
+import DCE from './dce';
 import Video from './Video';
 import FooterControl from './FooterControl';
 
@@ -19,6 +19,7 @@ export default class App extends Component {
 
     createInstance = async () => {
         let enhancer = await DCE.createInstance();
+        await enhancer.setUIElement(DCE.defaultUIElementURL);
         return enhancer;
     }
 

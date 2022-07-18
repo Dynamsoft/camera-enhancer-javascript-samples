@@ -12,6 +12,8 @@ export default {
     methods: {
         async init() {
             let enhancer = await DCE.createInstance();
+            await enhancer.setUIElement(DCE.defaultUIElementURL);
+            console.log("enhancer created");
             this.$store.commit('setEnhancer',enhancer);
             const callbackCameraOpen = () => {
                 console.log("camera opened");
