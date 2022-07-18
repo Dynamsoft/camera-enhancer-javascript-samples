@@ -133,7 +133,7 @@
     </div>
     <div class="dce-video-container"></div>
     <div class="dce-scanarea">
-      <div class="dce-scanlight" style="display: none"></div>
+      <div class="dce-scanlight"></div>
     </div>
   </div>
   <header>
@@ -141,7 +141,13 @@
       <select class="dce-sel-camera"></select>
     </div>
     <div class="dce-resolution">
-      <select class="dce-sel-resolution"></select>
+      <select class="dce-sel-resolution">
+        <option value="got"></option>
+        <option data-width="3840" data-height="2160">3840x2160</option>
+        <option data-width="1920" data-height="1080">1920x1080</option>
+        <option data-width="1280" data-height="720">1280x720</option>
+        <option data-width="640" data-height="480">640x480</option>
+      </select>
     </div>
     <div class="dce-full-name">Dynamsoft Camera Enhancer</div>
     <div class="dce-btn-close">
