@@ -1,6 +1,6 @@
 <div class="dce-ui-container">
   <div class="dce-main">
-    <div class="dce-bg-loading" style="display: none">
+    <div class="dce-bg-loading">
       <div class="dce-loading-img">
         <svg class="dce-svg-loop" viewBox="0 0 130 130">
           <g transform="translate(-121 -252)">
@@ -74,7 +74,7 @@
       </div>
       <div class="dce-loading-camera-tip">Loading camera...</div>
     </div>
-    <div class="dce-bg-camera" style="display: none">
+    <div class="dce-bg-camera">
       <svg viewBox="0 0 120 120">
         <g transform="translate(-126 -257)">
           <g>
@@ -133,7 +133,7 @@
     </div>
     <div class="dce-video-container"></div>
     <div class="dce-scanarea">
-      <div class="dce-scanlight" style="display: none"></div>
+      <div class="dce-scanlight"></div>
     </div>
   </div>
   <header>
@@ -141,7 +141,13 @@
       <select class="dce-sel-camera"></select>
     </div>
     <div class="dce-resolution">
-      <select class="dce-sel-resolution"></select>
+      <select class="dce-sel-resolution">
+        <option class="dce-opt-gotResolution" value="got"></option>
+        <option data-width="3840" data-height="2160">3840x2160</option>
+        <option data-width="1920" data-height="1080">1920x1080</option>
+        <option data-width="1280" data-height="720">1280x720</option>
+        <option data-width="640" data-height="480">640x480</option>
+      </select>
     </div>
     <div class="dce-full-name">Dynamsoft Camera Enhancer</div>
     <div class="dce-btn-close">
@@ -335,6 +341,7 @@
   }
 
   .dce-main > .dce-bg-loading {
+    display: none;
     position: absolute;
     left: 50%;
     min-width: 130px;
@@ -373,6 +380,7 @@
   }
 
   .dce-main > .dce-bg-camera {
+    display: none;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -382,6 +390,7 @@
 
   .dce-main > .dce-scanarea {
     position: absolute;
+    pointer-events: none;
   }
 
   .dce-main > .dce-scanarea > .dce-scanlight {
@@ -453,6 +462,7 @@
     bottom: 0;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.3);
+    pointer-events: none;
   }
 
   footer > .dce-footer-1 {
