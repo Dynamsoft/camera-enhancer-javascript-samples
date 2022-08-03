@@ -16,6 +16,7 @@
       <option value="image">image</option>
     </select>
     <button id="btn-add-shape">add shape</button>
+    <button id="btn-remove-all-shapes">remove all shapes</button>
     <br />
     <button id="btn-use-custom-style">use custom style</button>
     <button id="btn-switch-mode">switch mode</button>
@@ -141,6 +142,16 @@
       });
 
       document
+        .querySelector("#btn-remove-all-shapes")
+        .addEventListener("click", () => {
+          if (!drawingLayer) {
+            console.error(`The initialization is not complete.`);
+            return;
+          }
+          drawingLayer.clearDrawingItems();
+        });
+
+      document
         .querySelector("#btn-use-custom-style")
         .addEventListener("click", () => {
           if (!drawingLayer) {
@@ -148,13 +159,13 @@
             return;
           }
           const styleDefinition = {
-            lineWidth:5, 
+            lineWidth: 5,
             fillStyle: "rgba(254, 180, 32, 0.3)",
             strokeStyle: "rgba(254, 180, 32, 0.9)",
             paintMode: "strokeAndFill",
             fontFamily: "sans-serif",
             fontSize: 20,
-          }
+          };
           const styleId = cameraEnhancer.createDrawingStyle(styleDefinition);
           drawingLayer.setDrawingStyle(styleId);
         });
