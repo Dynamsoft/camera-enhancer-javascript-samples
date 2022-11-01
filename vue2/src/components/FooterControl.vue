@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import {DrawingItem} from 'cube-dynamsoft-camera-enhancer';
+import {DrawingItem} from 'dynamsoft-camera-enhancer';
 export default {
     name: 'FooterControl',
     data() {

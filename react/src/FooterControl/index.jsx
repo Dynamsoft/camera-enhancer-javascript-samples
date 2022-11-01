@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { DrawingItem } from 'cube-dynamsoft-camera-enhancer';
+import { DrawingItem } from 'dynamsoft-camera-enhancer';
 import './index.css'
 
 export default class FooterControl extends Component {

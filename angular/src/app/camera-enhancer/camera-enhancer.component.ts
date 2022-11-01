@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Output, ElementRef } from '@angular/core';
 import DCE from '../dce';
-import { DrawingItem } from 'cube-dynamsoft-camera-enhancer';
+import { DrawingItem } from 'dynamsoft-camera-enhancer';
 @Component({
   selector: 'app-camera-enhancer',
   templateUrl: './camera-enhancer.component.html',

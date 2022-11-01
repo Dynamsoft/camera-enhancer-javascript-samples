@@ -13,12 +13,12 @@
     Loading...
     <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.js"></script>
     <script>
-        requirejs(['https://cdn.jsdelivr.net/npm/cube-dynamsoft-camera-enhancer@0.20220718101421.0/dist/dce.js'], function({
+        requirejs(['https://cdn.jsdelivr.net/npm/dynamsoft-camera-enhancer@3.0.0/dist/dce.js'], function({
             CameraEnhancer,
             DrawingItem
         }) {
           (async ()=>{
-            CameraEnhancer.engineResourcePath = "https://unpkg.com/cube-dynamsoft-camera-enhancer@0.20220718101421.0/dist/";
+            CameraEnhancer.engineResourcePath = "https://unpkg.com/dynamsoft-camera-enhancer@3.0.0/dist/";
             const enhancer = await CameraEnhancer.createInstance();
             await enhancer.open(true);
             const drawingLayer = enhancer.createDrawingLayer();
