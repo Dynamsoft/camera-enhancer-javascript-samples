@@ -4,16 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>2.customize-the-ui</title>
-    <script src="https://cdn.jsdelivr.net/npm/dynamsoft-camera-enhancer@3.3.4/dist/dce.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/dynamsoft-camera-enhancer@3.3.4/dist/dce.js"></script> -->
+    <script src="https://npm.scannerproxy.com/cdn/@scannerproxy/dynamsoft-camera-enhancer@4.0.0-dev-20230629160447/dist/dce.js"></script>
   </head>
   <body>
     <script>
+      let cameraView;
       let cameraEnhancer;
-      (async()=>{
-        Dynamsoft.DCE.CameraEnhancer.defaultUIElementURL = "./ui.html";
-        cameraEnhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance();
-        cameraEnhancer.setVideoFit("cover");
-        await cameraEnhancer.open(true);
+      (async () => {
+        Dynamsoft.DCE.CameraView.defaultUIElementURL = "./ui.html";
+        cameraView = await Dynamsoft.DCE.CameraView.createInstance();
+        cameraView.setVideoFit("cover");
+        document.body.append(cameraView.getUIElement());
+        cameraEnhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance(
+          cameraView
+        );
+        await cameraEnhancer.open();
       })();
     </script>
   </body>
