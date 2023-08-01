@@ -128,10 +128,9 @@
         capture.addEventListener('click', async ()=>{
             await pReady;
             if(!enhancer.isOpen()) return
-            let canvas = document.querySelectorAll('canvas')
             let item = document.createElement('div')
             item.id = 'item'
-            if(canvas.length >= 5) {
+            if(document.querySelectorAll('canvas').length >= 5) {
                 let items = document.querySelectorAll('#item')
                 picGroup.removeChild(items[0])
             } 
@@ -142,11 +141,12 @@
                 regionTop: 0,
                 regionMeasuredByPercentage: true
             });
-            item.appendChild(frameData.canvas);
+            let canvas = frameData.toCanvas();
+            item.appendChild(canvas);
             let download = document.createElement("a");
             download.innerHTML = 'download'
             download.download = 'capture'
-            download.href = frameData.canvas.toDataURL('img.png');
+            download.href = canvas.toDataURL('img.png');
             item.appendChild(download);
             picGroup.appendChild(item)
         })
