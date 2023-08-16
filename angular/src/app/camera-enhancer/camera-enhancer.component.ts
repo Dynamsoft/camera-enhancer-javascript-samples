@@ -1,5 +1,4 @@
-import { ElementRef } from '@angular/core';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import {
   CameraEnhancer,
   CameraView,
@@ -19,18 +18,17 @@ export class CameraEnhancerComponent {
 
   async ngAfterViewInit() {
     try {
-      this.cameraView = await CameraView.createInstance(
+      this.cameraView = await (this.pInstance = CameraView.createInstance(
         this.container!.nativeElement
-      );
-
-      this.cameraEnhancer = await CameraEnhancer.createInstance(
+      ));
+      this.cameraEnhancer = await (this.pInstance = CameraEnhancer.createInstance(
         this.cameraView
-      );
+      ));
       await this.cameraEnhancer.open();
+      this.pInstance = null;
     } catch (ex: any) {
-      let errMsg = ex.message || ex;
-      console.error(errMsg);
-      alert(errMsg);
+      alert(ex.message || ex);
+      throw ex;
     }
   }
 
