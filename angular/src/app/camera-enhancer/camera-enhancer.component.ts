@@ -1,34 +1,46 @@
-import { Component } from '@angular/core';
-import { CameraEnhancer, CameraView } from '@scannerproxy/dynamsoft-camera-enhancer';
+import { ElementRef } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import {
+  CameraEnhancer,
+  CameraView,
+} from '@dynamsoft/dynamsoft-camera-enhancer';
 
 @Component({
   selector: 'app-camera-enhancer',
   templateUrl: './camera-enhancer.component.html',
-  styleUrls: ['./camera-enhancer.component.css']
+  styleUrls: ['./camera-enhancer.component.css'],
 })
 export class CameraEnhancerComponent {
-  async ngOnInit(): Promise<void> {
+  cameraView: CameraView | null = null;
+  cameraEnhancer: CameraEnhancer | null = null;
+  pInstance: Promise<CameraView | CameraEnhancer> | null = null;
+  
+  @ViewChild('container') container: ElementRef<HTMLDivElement> | null = null;
+
+  async ngAfterViewInit() {
     try {
-      CameraView.engineResourcePath = "https://cdn.jsdelivr.net/npm/dynamsoft-camera-enhancer/dist/";
-      const cameraView = await CameraView.createInstance();
-      await cameraView.setUIElement(
-        (document.querySelector('.dce-video-container') as HTMLElement).parentElement as HTMLElement
+      this.cameraView = await CameraView.createInstance(
+        this.container!.nativeElement
       );
-      const cameraEnhancer = await CameraEnhancer.createInstance(cameraView);
-      await cameraEnhancer.open();
+
+      this.cameraEnhancer = await CameraEnhancer.createInstance(
+        this.cameraView
+      );
+      await this.cameraEnhancer.open();
     } catch (ex: any) {
-      let errMsg;
-      if (ex.message.includes('network connection error')) {
-        errMsg =
-          'Failed to connect to Dynamsoft License Server: network connection error. Check your Internet connection or contact Dynamsoft Support (support@dynamsoft.com) to acquire an offline license.';
-      } else {
-        errMsg = ex.message || ex;
-      }
+      let errMsg = ex.message || ex;
       console.error(errMsg);
       alert(errMsg);
     }
   }
+
   async ngOnDestroy() {
-    
+    if (this.cameraView && !this.cameraView.disposed) this.cameraView.dispose();
+    if (this.cameraEnhancer && !this.cameraEnhancer.disposed)
+      this.cameraEnhancer.dispose();
+    if (this.pInstance) {
+      const instance = await this.pInstance;
+      if (!instance.disposed) instance.dispose();
+    }
   }
 }
