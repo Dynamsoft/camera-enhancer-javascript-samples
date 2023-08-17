@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamsoft Camera Enhancer Sample - Control Camera</title>
+    <script src="https://npm.scannerproxy.com/cdn/@dynamsoft/dynamsoft-core@3.0.10-dev-20230811163138/dist/core.js"></script>
+    <script src="https://npm.scannerproxy.com/cdn/@dynamsoft/dynamsoft-camera-enhancer@4.0.0-dev-20230816093800/dist/dce.js"></script>
+  </head>
+  <body>
+    <button id="btn-open-camera">open camera</button>
+    <button id="btn-close-camera">close camera</button>
+    <br />
+    <label for="select-camera">camera: </label>
+    <select name="" id="select-camera"></select>
+    <br />
+    <label for="select-resolution">resolution: </label>
+    <select name="" id="select-resolution">
+      <option value="got-resolution" selected>1920*1080</option>
+      <option value="3840*2160">3840*2160</option>
+      <option value="1920*1080">1920*1080</option>
+      <option value="1280*720">1280*720</option>
+      <option value="640*480">640*480</option>
+    </select>
+    <div
+      id="div-ui-container"
+      style="width: 90vw; height: 80vh; border: 1px solid black"
+    >
+      <div class="dce-video-container" style="width: 100%; height: 100%"></div>
+    </div>
+    <script>
+      const uiContainer = document.querySelector("#div-ui-container");
+      const btnOpen = document.querySelector("#btn-open-camera");
+      const btnClose = document.querySelector("#btn-close-camera");
+      const cameraSelection = document.querySelector("#select-camera");
+      const resolutionSelection = document.querySelector("#select-resolution");
+
+      let cameraView, cameraEnhancer;
+
+      const init = async () => {
+        if (cameraEnhancer) return;
+
+        // 'testCameraAccess()' help judge if cameras in the device are available. Also, it makes the first opening of the camera faster.
+        const testResult =
+          await Dynamsoft.DCE.CameraEnhancer.testCameraAccess();
+        if (!testResult.ok) {
+          alert(testResult.message);
+          console.error(testResult.message);
+          return;
+        }
+
+        // Create 'CameraView' instance and set 'uiContainer' as its ui.
+        cameraView = await Dynamsoft.DCE.CameraView.createInstance(uiContainer);
+        // Create 'CameraEnhancer' instance and pass 'cameraView' to it for ui control.
+        cameraEnhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance(
+          cameraView
+        );
+
+        await getCameraList();
+      };
+
+      // Get all cameras in the devices and show them on 'select' element.
+      const getCameraList = async () => {
+        if (!cameraEnhancer) return null;
+
+        const cameraList = await cameraEnhancer.getAllCameras();
+        cameraSelection.innerText = "";
+        for (let camera of cameraList) {
+          const option = document.createElement("option");
+          option.innerText = camera.label;
+          option.value = camera.deviceId;
+          cameraSelection.add(option);
+        }
+      };
+
+      // Update camera that is using in the DOM.
+      const renderCurCamera = () => {
+        if (!cameraEnhancer) return;
+        const curCamera = cameraEnhancer.getSelectedCamera();
+        for (let option of cameraSelection.options) {
+          if (option.value == curCamera.deviceId) {
+            cameraSelection.value = option.value;
+            break;
+          }
+        }
+      };
+
+      // Update camera's resolution in the DOM.
+      const renderCurResolution = () => {
+        if (!cameraEnhancer) return;
+        const curResolution = cameraEnhancer.getResolution();
+        resolutionSelection.item(
+          0
+        ).innerText = `${curResolution.width}*${curResolution.height}`;
+        resolutionSelection.selectedIndex = 0;
+      };
+
+      init();
+
+      document.querySelector("#btn-open-camera").onclick = async () => {
+        if (!cameraEnhancer)
+          throw new Error(`Instance is not yet initialized.`);
+
+        await cameraEnhancer.open();
+        renderCurCamera();
+        renderCurResolution();
+      };
+
+      document.querySelector("#btn-close-camera").onclick = async () => {
+        if (!cameraEnhancer) return;
+
+        await cameraEnhancer.close();
+      };
+
+      cameraSelection.addEventListener("change", async () => {
+        if (!cameraEnhancer) return;
+
+        await cameraEnhancer.selectCamera(cameraSelection.value);
+        renderCurCamera();
+      });
+
+      resolutionSelection.addEventListener("change", async () => {
+        if (!cameraEnhancer) return;
+        const str = resolutionSelection.value;
+        const index = str.indexOf("*");
+        const width = parseInt(str.slice(0, index)),
+          height = parseInt(str.slice(index + 1));
+        await cameraEnhancer.setResolution({width, height});
+        renderCurResolution();
+      });
+    </script>
+  </body>
+</html>
