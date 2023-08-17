@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamsoft Camera Enhancer Sample - Fetch Frame</title>
+    <script src="https://npm.scannerproxy.com/cdn/@dynamsoft/dynamsoft-core@3.0.10-dev-20230811163138/dist/core.js"></script>
+    <script src="https://npm.scannerproxy.com/cdn/@dynamsoft/dynamsoft-camera-enhancer@4.0.0-dev-20230816093800/dist/dce.js"></script>
+  </head>
+  <body>
+    <button id="btn-open-camera">open camera</button>
+    <button id="btn-close-camera">close camera</button>
+    <br />
+    <button id="btn-set-region">set a region for frame fetching</button>
+    <button id="btn-fetch-frame">fetch frame</button>
+    <div id="div-ui-container" style="width: 90vw; height: 50vh"></div>
+    <div
+      id="div-image-container"
+      style="
+        margin-top: 10px;
+        width: 90vw;
+        height: 50vh;
+        border: 1px solid #fe8e14;
+      "
+    ></div>
+    <script>
+      const uiContainer = document.querySelector("#div-ui-container");
+      const imgContainer = document.querySelector("#div-image-container");
+
+      let cameraView, cameraEnhancer;
+      const init = async () => {
+        // Create 'CameraView' instance and use default UI.
+        cameraView = await Dynamsoft.DCE.CameraView.createInstance();
+        // Get 'CameraView' instance's UI and append it to DOM.
+        uiContainer.append(cameraView.getUIElement());
+        // Create 'CameraEnhancer' instance and pass 'cameraView' to it for UI control.
+        cameraEnhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance(
+          cameraView
+        );
+      };
+
+      init();
+
+      document.querySelector("#btn-open-camera").onclick = async () => {
+        if (!cameraEnhancer)
+          throw new Error(`Instance is not yet initialized.`);
+
+        await cameraEnhancer.open();
+      };
+
+      document.querySelector("#btn-close-camera").onclick = async () => {
+        if (!cameraEnhancer) return;
+
+        await cameraEnhancer.close();
+      };
+
+      document.querySelector("#btn-set-region").onclick = async () => {
+        if (!cameraEnhancer)
+          throw new Error(`Instance is not yet initialized.`);
+
+        cameraView.setScanRegionMaskVisible(true);
+        cameraView.setScanLaserVisible(false);
+        // Set a region for frame fetching
+        cameraEnhancer.setScanRegion({
+          x: 25,
+          y: 25,
+          width: 50,
+          height: 50,
+          isMeasuredInPercentage: true,
+        });
+      };
+
+      document.querySelector("#btn-fetch-frame").onclick = async () => {
+        if (!cameraEnhancer)
+          throw new Error(`Instance is not yet initialized.`);
+
+        // Fetch video frame.
+        const dceFrame = cameraEnhancer.fetchImage();
+        // Convert data to 'HTMLCanvasElement' and append it to DOM.
+        const canvas = dceFrame.toCanvas();
+        canvas.style.width = "100%";
+        canvas.style.height = "100%";
+        canvas.style.objectFit = "contain";
+        imgContainer.innerText = "";
+        imgContainer.append(canvas);
+      };
+    </script>
+  </body>
+</html>
