@@ -15,8 +15,11 @@
 
       let cameraView, cameraEnhancer;
       (async () => {
+        // Create 'CameraView' instance and use default UI.
         cameraView = await Dynamsoft.DCE.CameraView.createInstance();
+        // Get 'CameraView' instance's UI and append it to DOM.
         uiContainer.append(cameraView.getUIElement());
+        // Create 'CameraEnhancer' instance and pass 'cameraView' to it for UI control.
         cameraEnhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance(
           cameraView
         );
