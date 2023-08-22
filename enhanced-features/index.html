@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamsoft Camera Enhancer Sample - Enhanced Features</title>
+    <script src="https://npm.scannerproxy.com/cdn/@dynamsoft/dynamsoft-core@3.0.10-dev-20230811163138/dist/core.js"></script>
+    <script src="https://npm.scannerproxy.com/cdn/@dynamsoft/cvrjs@0.20230814165316.0/dist/cvr.js"></script>
+    <script src="https://npm.scannerproxy.com/cdn/@dynamsoft/dynamsoft-camera-enhancer@4.0.0-dev-20230816093800/dist/dce.js"></script>
+  </head>
+  <body>
+    <p>Tap the area you want to focus on.</p>
+    <div id="div-ui-container" style="width: 90vw; height: 90vh"></div>
+    <script>
+      const uiContainer = document.querySelector("#div-ui-container");
+
+      /** LICENSE ALERT - README
+       * To use the library, you need to first specify a license key using the API "initLicense" as shown below.
+       */
+
+      Dynamsoft.License.LicenseManager.initLicense("DLS2eyJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSJ9");
+
+      /**
+       * You can visit https://www.dynamsoft.com/customer/license/trialLicense?utm_source=github&product=dce&package=js to get your own trial license good for 30 days.
+       * Note that if you downloaded this sample from Dynamsoft while logged in, the above license key may already be your own 30-day trial license.
+       * For more information, see https://www.dynamsoft.com/camera-enhancer/docs/programming/javascript/user-guide/index.html?ver=4.0.0&utm_source=github#specify-the-license or contact support@dynamsoft.com.
+       * LICENSE ALERT - THE END
+       */
+
+      let cameraView, cameraEnhancer;
+      (async () => {
+        // Create 'CameraView' instance and use default UI.
+        cameraView = await Dynamsoft.DCE.CameraView.createInstance();
+        // Get 'CameraView' instance's UI and append it to DOM.
+        uiContainer.append(cameraView.getUIElement());
+        // Create 'CameraEnhancer' instance and pass 'cameraView' to it for UI control.
+        cameraEnhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance(
+          cameraView
+        );
+
+        // Enable enhanced feature 'tap_focus'.
+        // Note that it only works with Chromium-based browsers such as Edge and Chrome on Windows or Android. Of course, the camera needs to support manual focus.
+        await cameraEnhancer.enableEnhancedFeatures(
+          Dynamsoft.DCE.EnumEnhancedFeatures.EF_TAP_TO_FOCUS
+        );
+
+        await cameraEnhancer.open();
+      })();
+    </script>
+  </body>
+</html>
