@@ -2,7 +2,7 @@ import React from "react";
 import {
   CameraView,
   CameraEnhancer,
-} from "@dynamsoft/dynamsoft-camera-enhancer";
+} from "dynamsoft-camera-enhancer";
 import "./CameraEnhancerComponent.css";
 
 class CameraEnhancerComponent extends React.Component {
