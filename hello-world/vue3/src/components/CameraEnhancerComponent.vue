@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, getCurrentInstance, Ref } from "vue";
+import { onBeforeUnmount, onMounted, ref, getCurrentInstance, type Ref } from "vue";
 import {
   CameraView,
   CameraEnhancer,
