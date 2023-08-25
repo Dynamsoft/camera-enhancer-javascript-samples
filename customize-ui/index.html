@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamsoft Camera Enhancer Sample - Customize UI</title>
+    <script src="https://cdn.jsdelivr.net/npm/dynamsoft-core@3.0.10/dist/core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dynamsoft-camera-enhancer@4.0.0/dist/dce.js"></script>
+  </head>
+  <body>
+    <script>
+      let cameraView;
+      let cameraEnhancer;
+      (async () => {
+        // Create 'CameraView' instance and set element in './ui.html' as its UI.
+        cameraView = await Dynamsoft.DCE.CameraView.createInstance("./ui.html");
+        // Set video's CSS style 'object-fit' to 'cover'.
+        cameraView.setVideoFit("cover");
+        // Get 'CameraView' instance's UI and append it to DOM.
+        document.body.append(cameraView.getUIElement());
+        // Create 'CameraEnhancer' instance and pass 'cameraView' to it for UI control.
+        cameraEnhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance(
+          cameraView
+        );
+        await cameraEnhancer.open();
+      })();
+    </script>
+  </body>
+</html>
