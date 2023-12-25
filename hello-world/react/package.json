@@ -4,7 +4,8 @@
   "private": true,
   "homepage": "./",
   "dependencies": {
-    "dynamsoft-camera-enhancer": "^4.0.0",
+    "@dynamsoft/dynamsoft-camera-enhancer": "^4.0.1-dev-20231222174818",
+    "@dynamsoft/dynamsoft-core": "^3.0.20-dev-20231225151726",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",

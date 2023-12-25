@@ -3,7 +3,7 @@ import { onBeforeUnmount, onMounted, ref, getCurrentInstance, type Ref } from "v
 import {
   CameraView,
   CameraEnhancer,
-} from "dynamsoft-camera-enhancer";
+} from "@dynamsoft/dynamsoft-camera-enhancer";
 
 let cameraView: CameraView | null = null;
 let cameraEnhancer: CameraEnhancer | null = null;
