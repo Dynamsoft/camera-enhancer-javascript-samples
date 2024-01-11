@@ -2,7 +2,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import {
   CameraEnhancer,
   CameraView,
-} from '@dynamsoft/dynamsoft-camera-enhancer';
+} from 'dynamsoft-camera-enhancer';
 
 @Component({
   selector: 'app-camera-enhancer',
