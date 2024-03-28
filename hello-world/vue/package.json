@@ -10,7 +10,7 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false"
   },
   "dependencies": {
-    "dynamsoft-camera-enhancer": "^4.0.1",
+    "dynamsoft-camera-enhancer": "^4.0.2",
     "dynamsoft-core": "^3.0.30",
     "vue": "^3.3.4"
   },
