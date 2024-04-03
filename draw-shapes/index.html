@@ -53,7 +53,7 @@
                 y = 0,
                 width = 100,
                 height = 200;
-              const rectItem = new Dynamsoft.DCE.DrawingItem.RectDrawingItem({
+              const rectItem = new Dynamsoft.DCE.RectDrawingItem({
                 x,
                 y,
                 width,
@@ -82,7 +82,7 @@
                   y: 300,
                 },
               ];
-              const quadItem = new Dynamsoft.DCE.DrawingItem.QuadDrawingItem({
+              const quadItem = new Dynamsoft.DCE.QuadDrawingItem({
                 points,
               });
               drawingLayer.addDrawingItems([quadItem]);
@@ -92,7 +92,7 @@
             {
               const startPoint = { x: 400, y: 100 },
                 endPoint = { x: 600, y: 300 };
-              const lineItem = new Dynamsoft.DCE.DrawingItem.LineDrawingItem({
+              const lineItem = new Dynamsoft.DCE.LineDrawingItem({
                 startPoint,
                 endPoint,
               });
@@ -106,7 +106,7 @@
                 y = 100,
                 width = 200,
                 height = 100;
-              const textItem = new Dynamsoft.DCE.DrawingItem.TextDrawingItem(
+              const textItem = new Dynamsoft.DCE.TextDrawingItem(
                 text,
                 {
                   x,
@@ -128,7 +128,7 @@
               image.src = "image.png";
               image.decode().then(() => {
                 const imageItem =
-                  new Dynamsoft.DCE.DrawingItem.ImageDrawingItem(
+                  new Dynamsoft.DCE.ImageDrawingItem(
                     image,
                     { x, y, width, height },
                     true
