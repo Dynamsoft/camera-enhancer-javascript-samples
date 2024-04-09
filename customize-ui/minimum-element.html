@@ -4,21 +4,21 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dynamsoft Camera Enhancer Sample - Hello World</title>
+    <title>Dynamsoft Camera Enhancer Sample - Minimum Element</title>
     <script src="https://cdn.jsdelivr.net/npm/dynamsoft-core@3.0.30/dist/core.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dynamsoft-camera-enhancer@4.0.2/dist/dce.js"></script>
   </head>
   <body>
-    <div id="div-ui-container" style="width: 90vw; height: 90vh"></div>
+    <div id="div-ui-container" style="width: 100%; height: 90vh">
+      <div class="dce-video-container" style="width: 100%; height: 100%"></div>
+    </div>
     <script>
       const uiContainer = document.querySelector("#div-ui-container");
 
       let cameraView, cameraEnhancer;
       (async () => {
-        // Create 'CameraView' instance and use default UI.
-        cameraView = await Dynamsoft.DCE.CameraView.createInstance();
-        // Get 'CameraView' instance's UI and append it to DOM.
-        uiContainer.append(cameraView.getUIElement());
+        // Create 'CameraView' instance and set 'uiContainer' as its UI.
+        cameraView = await Dynamsoft.DCE.CameraView.createInstance(uiContainer);
         // Create 'CameraEnhancer' instance and pass 'cameraView' to it for UI control.
         cameraEnhancer = await Dynamsoft.DCE.CameraEnhancer.createInstance(
           cameraView
